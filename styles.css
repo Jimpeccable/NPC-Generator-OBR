@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #2c2c2c;
+    color: #ffffff;
+    margin: 0;
+    padding: 20px;
+}
+
+#app {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+#generateBtn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+#generateBtn:hover {
+    background-color: #45a049;
+}
+
+#npcInfo {
+    background-color: #3c3c3c;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+#npcInfo p {
+    margin: 5px 0;
+}
