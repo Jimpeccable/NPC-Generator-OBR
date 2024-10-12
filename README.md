@@ -1,16 +1,17 @@
 ---
-title: NPC Generator
+title: NPC Realm Generator
 description: Generate random NPCs with attributes and money for your roleplaying games
 author: James Coupe
-image: https://npc-generator-obr.onrender.com/hero-image.png
+image: https://npc-generator-obr.onrender.com/hero1.png
 icon: https://npc-generator-obr.onrender.com/icon.png
 tags:
   - tool
   - roleplay
   - character
 manifest: https://npc-generator-obr.onrender.com/manifest.json
-learn-more: https://github.com/jamescoupe/npc-generator
+learn-more: https://github.com/Jimpeccable/NPC-Generator-OBR/
 ---
+
 
 # NPC Generator
 
@@ -48,24 +49,30 @@ The NPC Generator is a powerful tool designed to enhance your roleplaying game e
 
 ## Screenshots
 
-![NPC Generator Interface](https://npc-generator-obr.onrender.com/screenshot1.png)
+![NPC Generator Interface](https://npc-generator-obr.onrender.com/trust.png)
 
 *The simple and intuitive interface of the NPC Generator*
+
+
+
+
+![Generated NPC Example](https://npc-generator-obr.onrender.com/Screenshot2.png)
+
+*An example of a generated NPC with all attributes*
 
 ## Support
 
 If you encounter any issues or have suggestions for improvement, please don't hesitate to reach out. You can contact me through the following channels:
 
-- GitHub Issues: [https://github.com/jimpeccable/npc-generator/issues](https://github.com/jimpeccable/npc-generator/issues)
-- Email: thefenexpanse@gmail.com
-- Web: https://sites.google.com/view/npcgenerator-jimpeccable/home
+- GitHub Issues: [https://github.com/Jimpeccable/NPC-Generator-OBR/issues](https://github.com/Jimpeccable/NPC-Generator-OBR)
+- Email: thefenexpanse@gmail.com.com
+- web: https://crithappensofficial.com
 
 ## Future Plans
 
 I'm committed to improving the NPC Generator based on user feedback. Some features I'm considering for future updates include:
 
 - Custom lists for names, professions, etc.
-- Ability to save favorite NPCs
 - Integration with other Owlbear Rodeo extensions
 
 Stay tuned for updates!
@@ -75,4 +82,3 @@ Stay tuned for updates!
 James Coupe is an avid roleplaying game enthusiast and software developer. The NPC Generator is born out of a passion for streamlining game preparation and enhancing spontaneous storytelling in RPG sessions.
 
 Thank you for using the NPC Generator. Happy gaming!
-

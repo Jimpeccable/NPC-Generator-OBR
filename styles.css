@@ -1,43 +1,272 @@
+:root {
+    --bg-primary: #2D3142; /* Dark blue */
+    --bg-secondary: #4F5D75; /* Medium blue */
+    --text-primary: #FFFFFF; /* White text */
+    --text-secondary: #BFC0C0; /* Light grey */
+    --accent: #EF8354; /* Orange for buttons */
+    --trust-negative: #e94560; /* Red for negative trust */
+    --trust-positive: #0f3460; /* Blue for positive trust */
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #2c2c2c;
-    color: #ffffff;
+    font-family: 'Lato', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    line-height: 1.6;
 }
 
 #app {
-    max-width: 400px;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-areas: 
+        "header header"
+        "main aside";
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    grid-area: header;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1, h2, h3 {
+    font-family: 'Cinzel', serif;
+    color: var(--text-secondary);
 }
 
 h1 {
-    text-align: center;
-}
-
-#generateBtn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
+    font-size: 2.5em;
     margin-bottom: 20px;
 }
 
-#generateBtn:hover {
-    background-color: #45a049;
+main {
+    grid-area: main;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 20px;
 }
 
-#npcInfo {
-    background-color: #3c3c3c;
+.tab-container {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tab-buttons {
+    display: flex;
+    background-color: var(--bg-primary);
+}
+
+.tab-button {
+    background-color: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tab-button.active {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.tab-content {
+    display: none;
     padding: 20px;
-    border-radius: 5px;
 }
 
-#npcInfo p {
+.tab-content.active {
+    display: block;
+}
+
+.generator-panel, .info-panel, .action-panel {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+button, select {
+    background-color: var(--accent);
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+    box-shadow: 0 0 10px rgba(239, 131, 84, 0.6);
+}
+
+button:hover {
+    background-color: #ff9b74;
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(239, 131, 84, 0.8);
+}
+
+button:active {
+    box-shadow: 0 0 10px rgba(239, 131, 84, 0.6);
+}
+
+select {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--accent);
+}
+
+.event-generator {
+    display: flex;
+    gap: 10px;
+}
+
+.event-generator select {
+    flex-grow: 1;
+}
+
+.info-box {
+    margin-bottom: 20px;
+}
+
+.info-content {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    padding: 15px;
+}
+
+.action-panel {
+    display: flex;
+    justify-content: space-between;
+}
+
+aside {
+    grid-area: aside;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.saved-npcs, .saved-locations {
+    margin-bottom: 30px;
+}
+
+#savedNPCsList, #savedLocationsList {
+    list-style-type: none;
+    padding: 0;
+}
+
+#savedNPCsList li, #savedLocationsList li {
+    background-color: rgba(255, 255, 255, 0.05);
     margin: 5px 0;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#savedNPCsList li:hover, #savedLocationsList li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.saved-item-name {
+    font-weight: bold;
+    color: var(--text-secondary);
+}
+
+.saved-item-details {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* NPC Trust System Styles */
+#npcTrustList {
+    list-style-type: none;
+    padding: 0;
+}
+
+.npc-trust-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.npc-trust-item span {
+    flex: 1;
+}
+
+.npc-trust-item input[type="range"] {
+    flex: 2;
+    margin: 0 10px;
+}
+
+.npc-trust-item .trust-value {
+    width: 20px;
+    text-align: center;
+}
+
+/* Custom range input styling */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(to right, var(--trust-negative), #ffffff, var(--trust-positive));
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+}
+
+/* Patreon tab styles */
+#patreonCode {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--accent);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border-radius: 4px;
+}
+
+#unlockFeaturesBtn {
+    display: block;
+    width: 100%;
+}
+
+@media (max-width: 850px) {
+    #app {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "header"
+            "main"
+            "aside";
+    }
 }
