@@ -3,15 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NPC Generator</title>
+    <title>DnD Realm Creator</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/@owlbear-rodeo/sdk@^1.3.8/dist/owlbear-rodeo-sdk.global.js"></script>
 </head>
 <body>
     <div id="app">
-        <h1>NPC Generator</h1>
-        <button id="generateBtn">Generate NPC</button>
-        <div id="npcInfo"></div>
+        <header>
+            <a href="https://www.patreon.com/c/Jimpeccable" target="_blank">
+            <img src="crit.png" alt="Crit Logo"></a>
+            <h1>DnD Realm Creator</h1>
+        </header>
+
+        <main role="main">
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="generate-tab">Generate</button>
+                <button class="tab-button" data-tab="trust-tab">NPC Trust</button>
+                <button class="tab-button" data-tab="noticeboards-tab">Noticeboards</button>
+                <button class="tab-button" data-tab="weather-tab">Weather</button>
+                <button class="tab-button" data-tab="shops-food-tab">Shops & Food</button>
+                <button class="tab-button" data-tab="factions-religions-tab">Factions & Religions</button>
+                <button class="tab-button" data-tab="patreon-tab">Patreon</button>
+                <button class="tab-button" data-tab="saved-items-tab">Saved Items</button>
+            </div>
+
+            <div id="generate-tab" class="tab-content active">
+                <div class="button-group">
+                    <button id="generateNPCBtn">NPC</button>
+                    <button id="generateTavernBtn">Tavern</button>
+                    <button id="generateCampBtn">Camp</button>
+                    <button id="generateTownBtn">Town</button>
+                    <button id="generateCityBtn">City</button>
+                </div>
+                <div class="event-generator patreon-locked">
+                    <select id="regionSelect">
+                        <option value="">--Select Region--</option>
+                    </select>
+                    <button id="generateEventBtn">Generate Event</button>
+                    <button id="clearEventBtn">Clear Event</button>
+                </div>
+                <div id="npcInfo" class="info-box"></div>
+                <div id="locationInfo" class="info-box"></div>
+                <div id="eventInfo" class="info-box patreon-locked"></div>
+                <div class="action-panel">
+                    <button id="saveNPCBtn">Save NPC</button>
+                    <button id="clearNPCBtn">Clear NPC</button>
+                    <button id="saveLocationBtn">Save Location</button>
+                    <button id="clearLocationBtn">Clear Location</button>
+                </div>
+            </div>
+
+            <div id="trust-tab" class="tab-content">
+                <h2>Trust System</h2>
+                <div id="selectedNPCInfo"></div>
+                <div id="npcTrustList"></div>
+                <div class="button-group patreon-locked">
+                    <button id="clearSelectedNPCBtn">Clear Selected NPC</button>
+                </div>
+                <div id="npcEvents" class="info-box patreon-locked"></div>
+            </div>
+
+            <div id="factions-religions-tab" class="tab-content">
+                <h2>Factions & Religions</h2>
+                <div id="factions-religions-content" class="patreon-locked">
+                    <div class="two-column-layout">
+                        <div id="factions-section">
+                            <h3>Factions</h3>
+                            <select id="faction-ideology">
+                                <option value="">--Select Ideology--</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                            <button id="generate-faction">Generate Faction</button>
+                            <button id="clear-faction">Clear Faction</button>
+                            <div id="faction-display"></div>
+                        </div>
+                        <div id="religions-section">
+                            <h3>Religions</h3>
+                            <select id="religion-objective">
+                                <option value="">--Select Objective--</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                            <button id="generate-religion">Generate Religion</button>
+                            <button id="clear-religion">Clear Religion</button>
+                            <div id="religion-display"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="factions-religions-description">
+                    <p>This feature is locked. Please unlock with a valid Patreon code.</p>
+                </div>
+            </div>
+
+            <div id="noticeboards-tab" class="tab-content">
+                <h2>Noticeboards</h2>
+                <div id="noticeboards-content" class="patreon-locked">
+                    <div class="button-group">
+                        <button id="tavernNoticesBtn">Tavern Notices</button>
+                        <button id="streetGossipBtn">Street Gossip</button>
+                        <button id="townNoticesBtn">Town Notices</button>
+                    </div>
+                    <div id="noticeboardContent" class="info-box"></div>
+                </div>
+                <div id="noticeboards-description">
+                    <p>This feature is locked. Please unlock with a valid Patreon code.</p>
+                </div>
+            </div>
+
+            <div id="weather-tab" class="tab-content">
+                <h2>Weather System</h2>
+                <div class="button-group">
+                    <select id="weather-condition">
+                        <option value="">--Select Weather--</option>
+                        <option value="Clear skies">Clear skies</option>
+                        <option value="Light rain">Light rain</option>
+                        <option value="Heavy rain">Heavy rain</option>
+                        <option value="Thunderstorm">Thunderstorm</option>
+                        <option value="Foggy">Foggy</option>
+                        <option value="Windy">Windy</option>
+                        <option value="Scorching heat">Scorching heat</option>
+                        <option value="Freezing cold">Freezing cold</option>
+                        <option value="Partly cloudy">Partly cloudy</option>
+                        <option value="Overcast">Overcast</option>
+                    </select>
+                    <button id="generateWeatherEventBtn" class="gm-only patreon-locked">Generate Weather Event</button>
+                </div>
+                <div id="weatherEventInfo" class="info-box patreon-locked"></div>
+            </div>
+
+            <div id="shops-food-tab" class="tab-content">
+                <h2>Shops & Food</h2>
+                <div id="shops-section">
+                    <h3>Shops</h3>
+                    <span><p><legend>Exchange Rate: 1 gold = 10 silver = 100 copper</legend></p></span>
+                    <select id="shop-type">
+                        <option value="">--Select Shop Type--</option>
+                        <option value="blacksmith">Blacksmith</option>
+                        <option value="general">General Store</option>
+                        <option value="magic">Magic Shop</option>
+                        <option value="alchemist">Alchemist</option>
+                    </select>
+                    <div class="markup-container">
+                        <label for="markup-multiplier">Markup Multiplier:</label>
+                        <input type="number" id="markup-multiplier" min="0.1" step="0.1" value="1">
+                    </div>
+                    <button id="generate-shop-items">Generate Items</button>
+                    <div id="shop-items-list"></div>
+                </div>
+                <div id="food-section">
+                    <h3>Food & Taverns</h3>
+                    <select id="establishment-type">
+                        <option value="">--Select Establishment Type--</option>
+                        <option value="poor">Poor</option>
+                        <option value="modest">Modest</option>
+                        <option value="wealthy">Wealthy</option>
+                        <option value="aristocratic">Aristocratic</option>
+                    </select>
+                    <button id="generate-menu">Generate Menu</button>
+                    <div id="menu-list"></div>
+                </div>
+                <div id="mount-section">
+                    <h3>Mounts & Services</h3>
+                    <select id="mount-type">
+                        <option value="">--Select Mount Type--</option>
+                    </select>
+                    <button id="generate-mounts">Generate Mounts</button>
+                    <div id="mount-list"></div>
+                </div>
+                <button id="clear-shop-items">Clear Shop Items</button>
+                <button id="clear-menu">Clear Menu</button>
+                <button id="clear-mounts">Clear Mounts</button>
+            </div>
+
+            <div id="patreon-tab" class="tab-content">
+                <div class="patreon-section">
+                    <input type="text" id="patreonCode" placeholder="Enter Patreon Code">
+                    <button id="unlockFeaturesBtn">Unlock Features</button>
+                </div>
+            </div>
+
+            <div id="saved-items-tab" class="tab-content">
+                <h2>Saved NPCs</h2>
+                <div class="filter-options">
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="filter-all" checked>
+                        <span class="checkmark"></span>
+                        All
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="filter-met">
+                        <span class="checkmark"></span>
+                        Met
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="filter-injured">
+                        <span class="checkmark"></span>
+                        Injured
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="filter-dead">
+                        <span class="checkmark"></span>
+                        Dead
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="filter-missing">
+                        <span class="checkmark"></span>
+                        Missing
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="filter-retired">
+                        <span class="checkmark"></span>
+                        Retired
+                    </label>
+                </div>
+                <button id="removeSelectedNPCs" class="remove-button">Remove Selected NPCs</button>
+                <ul id="savedNPCsList"></ul>
+                <h2>Saved Locations</h2>
+                <button id="removeSelectedLocations" class="remove-button">Remove Selected Locations</button>
+                <ul id="savedLocationsList"></ul>
+                <h2>Visited Items</h2>
+                <div id="visitedItems"></div>
+            </div>
+        </main>
     </div>
+    <footer>
+    <a href="https://www.patreon.com/c/Jimpeccable" target="_blank">
+        <img src="Patreon.png" alt="Patreon" id="patreon-image">
+    </a>
+    </footer>
     <script src="script.js"></script>
 </body>
 </html>

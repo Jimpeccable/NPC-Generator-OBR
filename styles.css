@@ -1,43 +1,817 @@
+:root {
+    --bg-primary: #2D3142;
+    --bg-secondary: #4F5D75;
+    --text-primary: #FFFFFF;
+    --text-secondary: #BFC0C0;
+    --accent: #EF8354;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #2c2c2c;
-    color: #ffffff;
+    font-family: 'Lato', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     margin: 0;
-    padding: 20px;
+    padding: 0;
+    line-height: 1.6;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
 }
 
 #app {
-    max-width: 400px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+        "header"
+        "main"
+        "aside";
+    max-width: 100%;
     margin: 0 auto;
+    padding: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+header {
+    grid-area: header;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 h1 {
-    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+    animation: glowPulse 2s infinite alternate;
 }
 
-#generateBtn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
+@keyframes glowPulse {
+    0% {
+        text-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
+    }
+    100% {
+        text-shadow: 0 0 20px rgba(255, 0, 0, 0.9), 0 0 30px rgba(255, 0, 0, 0.7);
+    }
+}
+
+h2, h3 {
+    font-family: 'Cinzel', serif;
+    color: var(--text-secondary);
+}
+
+main {
+    grid-area: main;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 20px;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.generator-panel, .info-panel, .action-panel {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
-#generateBtn:hover {
-    background-color: #45a049;
+button, select {
+    background-color: var(--accent);
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+    box-shadow: 0 0 10px rgba(239, 131, 84, 0.6);
+    max-width: 100%;
 }
 
-#npcInfo {
-    background-color: #3c3c3c;
+button:hover {
+    background-color: #ff9b74;
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(239, 131, 84, 0.8);
+}
+
+button:active {
+    box-shadow: 0 0 10px rgba(239, 131, 84, 0.6);
+}
+
+select {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--accent);
+}
+
+.event-generator {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.event-generator select {
+    flex-grow: 1;
+    max-width: calc(100% - 220px);
+}
+
+.event-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.event-buttons button {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.info-box {
+    margin-bottom: 20px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.info-content {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    padding: 15px;
+}
+
+.info-content p {
+    margin: 5px 0;
+}
+
+.action-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+aside {
+    grid-area: aside;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
     padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.saved-npcs, .saved-locations {
+    margin-bottom: 30px;
+}
+
+#savedNPCsList, #savedLocationsList {
+    list-style-type: none;
+    padding: 0;
+}
+
+#savedNPCsList li, #savedLocationsList li {
+    background-color: rgba(255, 255, 255, 0.05);
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#savedNPCsList li:hover, #savedLocationsList li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.saved-item-name {
+    font-weight: bold;
+    color: var(--text-secondary);
+}
+
+.saved-item-details {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* NPC Trust Styles */
+#trust-tab {
+    display: none;
+}
+
+#trust-tab.active {
+    display: block;
+}
+
+.trust-description {
+    margin-bottom: 20px;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+#selectedNPCInfo {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+#npcInfo, #locationInfo, #eventInfo {
+    display: none;
+}
+
+#generate-tab.active #npcInfo,
+#generate-tab.active #locationInfo,
+#generate-tab.active #eventInfo {
+    display: block;
+}
+
+#npcTrustList {
+    list-style-type: none;
+    padding: 0;
+}
+
+.npc-trust-item {
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.npc-name {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.trust-slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.trust-slider-container input[type="range"] {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.trust-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    margin-top: 5px;
+}
+
+.trust-min {
+    text-align: left;
+}
+
+.trust-max {
+    text-align: right;
+}
+
+.trust-value {
+    text-align: center;
+    font-weight: bold;
+    color: var(--accent);
+    margin-top: 5px;
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 10px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #e94560, #ffffff, #0f3460);
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+input[type="range"]:hover {
+    opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+}
+
+/* Tab styles */
+.tab-buttons {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.tab-button.active {
+    background-color: var(--accent);
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Patreon section */
+.patreon-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.patreon-locked {
+    display: none;
+}
+
+#patreonCode {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid var(--accent);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+#unlockFeaturesBtn {
+    width: 100%;
+}
+
+/* Visited items */
+#visitedItems {
+    margin-top: 20px;
+}
+
+#visitedNPCsList, #visitedLocationsList {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+#visitedNPCsList li, #visitedLocationsList li {
+    margin-bottom: 5px;
+}
+
+#noticeboardContent ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#noticeboardContent li {
+    background-color: rgba(255, 255, 255, 0.05);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+#patreon-section-footer {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    text-align: center;
+}
+
+#patreon-section-footer img {
+    margin-bottom: 15px;
+}
+
+#patreon-section-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2em;
+    transition: color 0.3s;
+}
+
+#patreon-section-footer a:hover {
+    color: #ff9b74;
+}
+
+/* Updated Scrollbar styles */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.5) rgba(0, 0, 0, 0.2);
+}
+
+/* Filter options */
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-checkbox {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    user-select: none;
+}
+
+.filter-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
     border-radius: 5px;
 }
 
-#npcInfo p {
-    margin: 5px 0;
+.filter-checkbox:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+.filter-checkbox input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.filter-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.filter-checkbox .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+/* NPC and Location items */
+.npc-item, .location-item {
+    display: flex;
+    position: relative;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.remove-checkbox {
+    flex: 0 0 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+}
+
+.remove-checkbox label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+}
+
+.remove-checkbox input {
+    margin-bottom: 5px;
+}
+
+.npc-info, .location-info {
+    flex: 1;
+}
+
+.npc-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.npc-status label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.npc-status input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+/* Remove button */
+.remove-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    #app {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "header"
+            "main"
+            "aside";
+    }
+
+    .action-panel {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .action-panel button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .event-generator {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .event-generator select,
+    .event-generator button {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab-buttons {
+        flex-direction: column;
+    }
+
+    .tab-button {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .filter-options {
+        flex-direction: column;
+    }
+
+    .npc-item, .location-item {
+        flex-direction: column;
+    }
+
+    .remove-checkbox {
+        align-self: flex-end;
+        margin-bottom: 10px;
+    }
+}
+
+/* Shops & Food Tab Styles */
+#shops-food-tab {
+    display: none;
+    padding: 20px;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+#shops-food-tab.active {
+    display: block;
+}
+
+#shops-food-tab h2 {
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+#shops-food-tab h3 {
+    color: var(--text-secondary);
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+#shops-food-tab select,
+#shops-food-tab input,
+#shops-food-tab button {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid var(--accent);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+#shops-food-tab button {
+    background-color: var(--accent);
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#shops-food-tab button:hover {
+    background-color: #ff9b74;
+}
+
+#shop-items-list,
+#menu-list,
+#mount-list {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+#shop-items-list li,
+#menu-list li,
+#mount-list li {
+    margin-bottom: 10px;
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.markup-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.markup-container label {
+    margin-right: 10px;
+}
+
+#markup-multiplier {
+    width: 60px;
+}
+
+/* Weather tab styles */
+#weather-tab .button-group {
+    margin-bottom: 20px;
+}
+
+#weatherInfo,
+#weatherEventInfo {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+/* Noticeboard tab styles */
+#noticeboards-tab .button-group {
+    margin-bottom: 20px;
+}
+
+#noticeboardContent {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+/* Locked message style */
+.locked-message {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: #ff6b6b;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Disable button styles */
+button:disabled {
+    background-color: #888;
+    cursor: not-allowed;
+}
+
+button:disabled:hover {
+    background-color: #888;
+    transform: none;
+    box-shadow: none;
+}
+
+.npc-name {
+  cursor: pointer;
+}
+
+.npc-name {
+    cursor: pointer;
+    font-size: larger;
+    color: white;
+}
+  
+.two-column-layout {
+    display: flex;
+    justify-content: space-between;
+}
+
+#factions-section, #religions-section {
+    width: 48%;
+}
+
+#faction-display, #religion-display {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+#faction-display h4, #religion-display h4 {
+    margin-top: 0;
+    color: var(--accent);
+}
+
+#faction-display ul, #religion-display ul {
+    padding-left: 20px;
+}  
+
+header img {
+    width: 200px;
+    max-width: 100%;
+    height: auto;
+}
+
+footer {
+    text-align: center;
+    padding: 20px 0;
+}
+
+#patreon-image {
+    width: 200px;
+    max-width: 100%;
+    height: auto;
 }
