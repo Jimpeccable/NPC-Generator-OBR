@@ -3,14 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NPC Generator</title>
+    <title>DnD Realm Creator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Cinzel:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app">
-        <h1>NPC Generator</h1>
-        <button id="generateBtn">Generate NPC</button>
-        <div id="npcInfo"></div>
+    <div id="app">        
+        <header>
+            <img src="crit.png" alt="Crit Logo" style="display: block; margin: 0 auto; height: 150px;">
+            <h1>DnD Realm Creator</h1>
+        </header>
+
+        <main>
+            <div class="tab-buttons">
+                <button class="tab-button active" data-tab="generate-tab">Generate</button>
+                <button class="tab-button" data-tab="trust-tab">NPC Trust</button>
+                <button class="tab-button" data-tab="patreon-tab">Patreon</button>
+            </div>
+            
+            <div id="generate-tab" class="tab-content active">
+                <h2>Generate</h2>
+                <div class="button-group">
+                    <button id="generateNPCBtn">NPC</button>
+                    <button id="generateTavernBtn">Tavern</button>
+                    <button id="generateCampBtn">Camp</button>
+                    <button id="generateTownBtn">Town</button>
+                    <button id="generateCityBtn">City</button>
+                </div>
+                <div class="event-generator patreon-locked">
+                    <select id="regionSelect">
+                        <option value="">--Select Region--</option>
+                    </select>
+                    <button id="generateEventBtn">Generate Event</button>
+                    <button id="clearEventBtn">Clear Event</button>
+                </div>
+                <div id="npcInfo" class="info-box"></div>
+                <div id="locationInfo" class="info-box"></div>
+                <div id="eventInfo" class="info-box patreon-locked"></div>
+                <div class="action-panel">
+                    <button id="saveNPCBtn" class="patreon-locked">Save NPC</button>
+                    <button id="clearNPCBtn">Clear NPC</button>
+                    <button id="saveLocationBtn" class="patreon-locked">Save Location</button>
+                    <button id="clearLocationBtn">Clear Location</button>
+                </div>
+            </div>
+            
+            <div id="trust-tab" class="tab-content">
+                <h2>NPC Trust System</h2>
+                <p>The NPC Trust System allows you to track how each NPC feels about the party. The scale ranges from 0 (overt enemy) to 8 (devoted ally). Use the sliders to adjust the trust level as your campaign progresses.</p>
+                <div id="selectedNPCInfo"></div>
+                <div id="npcTrustList"></div>
+            </div>
+            
+            <div id="patreon-tab" class="tab-content">
+                <h2>Unlock Premium Features</h2>
+                <input type="text" id="patreonCode" placeholder="Enter Patreon Code">
+                <button id="unlockFeaturesBtn">Unlock Features</button>
+            </div>
+        </main>
+        
+        <aside>
+            <div class="saved-npcs">
+                <h2>Saved NPCs</h2>
+                <ul id="savedNPCsList"></ul>
+                <button id="clearNPCsBtn">Clear All NPCs</button>
+            </div>
+            <div class="saved-locations">
+                <h2>Saved Locations</h2>
+                <ul id="savedLocationsList"></ul>
+                <button id="clearLocationsBtn">Clear All Locations</button>
+            </div>
+            <div id="visitedItems">
+                <h3>Visited NPCs</h3>
+                <ul id="visitedNPCsList"></ul>
+                <h3>Visited Locations</h3>
+                <ul id="visitedLocationsList"></ul>
+            </div>
+        </aside>
+
+        <!-- Insert patreon.png image and a link to Patreon at the bottom -->
+        <footer style="text-align: center; margin-top: 20px;">
+            <img src="Patreon.png" alt="Patreon Logo" style="width: auto; height: 100px;">
+            <p><a href="https://www.patreon.com/Jimpeccable" target="_blank">Unlock features through Patreon, now!</a></p>
+        </footer>
     </div>
     <script src="script.js"></script>
 </body>
