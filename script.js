@@ -3,7 +3,7 @@
 import {
     firstNames, lastNames, races, classes, professions, demeanors, motivations,
     secrets, quirks, items, tavernNames, campDescriptions, staffRoles, regions,
-    trustLevels, noticeboardsData
+    trustLevels
 } from './data.js';
 
 // Utility Functions
@@ -436,7 +436,7 @@ function updateFeatureAccess() {
     const isUnlocked = isPatreonUnlocked();
     const lockedElements = document.querySelectorAll('.patreon-locked');
     lockedElements.forEach(el => {
-        el.style.display = isUnlocked ? 'inline-block' : 'none';
+        el.style.display = isUnlocked ? 'block' : 'none';
     });
     
     const unlockFeaturesBtn = document.getElementById('unlockFeaturesBtn');
@@ -444,12 +444,6 @@ function updateFeatureAccess() {
         unlockFeaturesBtn.textContent = isUnlocked ? 'Change Patreon Code' : 'Unlock Patreon Features';
     }
 }
-
-// Expose necessary functions to the global scope
-window.updateNPCMet = updateNPCMet;
-window.updateLocationVisited = updateLocationVisited;
-window.updateNPCTrust = updateNPCTrust;
-window.updateTrustLabel = updateTrustLabel;
 
 // Initialize the application
 function initApp() {
@@ -469,9 +463,6 @@ function initApp() {
         'clearNPCsBtn': clearSavedNPCs,
         'clearLocationsBtn': clearSavedLocations,
         'unlockFeaturesBtn': unlockFeatures,
-        'tavernNoticesBtn': generateTavernNotices,
-        'streetGossipBtn': generateStreetGossip,
-        'townNoticesBtn': generateTownNotices,
     };
 
     for (const [id, func] of Object.entries(buttons)) {
