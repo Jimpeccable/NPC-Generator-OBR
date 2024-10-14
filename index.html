@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DnD Realm Creator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -18,8 +17,8 @@
             <div class="tab-buttons">
                 <button class="tab-button active" data-tab="generate-tab">Generate</button>
                 <button class="tab-button" data-tab="trust-tab">NPC Trust</button>
-                <button class="tab-button" data-tab="patreon-tab">Patreon</button>
                 <button class="tab-button" data-tab="noticeboards-tab">Noticeboards/Quests</button>
+                <button class="tab-button" data-tab="patreon-tab">Patreon</button>
             </div>
 
             <div id="generate-tab" class="tab-content active">
@@ -51,7 +50,6 @@
 
             <div id="trust-tab" class="tab-content">
                 <h2>NPC Trust System</h2>
-                <p class="trust-description">The NPC Trust System allows you to track how each NPC feels about the party. The scale ranges from 0 (overt enemy) to 8 (devoted ally). Use the sliders to adjust the trust level as your campaign progresses.</p>
                 <div id="selectedNPCInfo"></div>
                 <div id="npcTrustList"></div>
             </div>
@@ -59,9 +57,9 @@
             <div id="noticeboards-tab" class="tab-content">
                 <h2>Noticeboards/Quests</h2>
                 <div class="button-group">
-                    <button id="tavernNoticesBtn" class="patreon-locked">Tavern Notices</button>
-                    <button id="streetGossipBtn" class="patreon-locked">Street Gossip</button>
-                    <button id="townNoticesBtn" class="patreon-locked">Town Notices</button>
+                    <button id="tavernNoticesBtn">Tavern Notices</button>
+                    <button id="streetGossipBtn">Street Gossip</button>
+                    <button id="townNoticesBtn">Town Notices</button>
                 </div>
                 <div id="noticeboardContent" class="info-box patreon-locked"></div>
             </div>
@@ -93,13 +91,11 @@
                 <ul id="visitedLocationsList"></ul>
             </div>
         </aside>
-
-        <footer>
-    <img src="Patreon.png" alt="Patreon Logo" style="width: auto; height: 250px;">
-    <a href="https://www.patreon.com/Jimpeccable" target="_blank">Unlock features through Patreon, now!</a>
-</footer>
     </div>
-
+    <footer>
+        <img src="Patreon.png" alt="Patreon Logo" style="width: auto; height: 250px;">
+        <a href="https://www.patreon.com/Jimpeccable" target="_blank">Unlock features through Patreon, now!</a>
+    </footer>
     <script type="module" src="script.js"></script>
 </body>
 </html>
