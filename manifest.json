@@ -1,7 +1,7 @@
 {
   "name": "NPC Generator",
   "description": "Generate random NPCs, locations, and events for your RPG sessions",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "James Coupe",
   "icon": "https://npc-generator-obr-test.onrender.com/icon.png",
   "manifest_version": 1,
