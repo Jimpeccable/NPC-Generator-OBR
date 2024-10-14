@@ -1,9 +1,9 @@
 // script.js
 
 import {
-    firstNames, lastNames, sexes, races, classes, backgrounds, professions,
-    demeanors, motivations, secrets, quirks, items, tavernNames,
-    campDescriptions, staffRoles, regions, trustLevels, noticeboardsData
+    firstNames, lastNames, races, classes, professions, demeanors, motivations,
+    secrets, quirks, items, tavernNames, campDescriptions, staffRoles, regions,
+    trustLevels, noticeboardsData
 } from './data.js';
 
 // Utility Functions
@@ -39,13 +39,6 @@ function switchTab(tabId) {
         selectedTab.classList.add('active');
         selectedButton.classList.add('active');
     }
-
-    if (tabId === 'generate-tab') {
-        const selectedNPCInfo = document.getElementById('selectedNPCInfo');
-        if (selectedNPCInfo) {
-            selectedNPCInfo.innerHTML = '';
-        }
-    }
 }
 
 // Generator Functions
@@ -65,8 +58,6 @@ function generateNPC() {
         secret: getRandomElement(secrets)
     };
     displayNPC(npc);
-    document.getElementById('npcInfo').style.display = 'block';
-    document.getElementById('locationInfo').style.display = 'none';
 }
 
 function generateLocation(type) {
@@ -171,6 +162,9 @@ function displayNPC(npc) {
             <p><strong>Secret:</strong> ${npc.secret}</p>
         </div>
     `;
+    npcInfo.style.display = 'block';
+    document.getElementById('locationInfo').style.display = 'none';
+    document.getElementById('eventInfo').style.display = 'none';
 }
 
 function displayVisitedItems() {
@@ -487,13 +481,7 @@ function initApp() {
         }
     }
 
-    // Initialize feature lock state
-    if (localStorage.getItem('featuresUnlocked') === null) {
-        localStorage.setItem('featuresUnlocked', 'false');
-    }
-    updateFeatureAccess();
-
-    // Initialize tabs
+    // Initialize tab switching
     const tabs = document.querySelectorAll('.tab-button');
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
