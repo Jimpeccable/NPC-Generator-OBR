@@ -3,7 +3,7 @@
   "description": "Generate random NPCs, locations, and events for your RPG sessions",
   "version": "1.0.3",
   "author": "James Coupe",
-  "icon": "icon.png",
+  "icon": "/icon.png",
   "manifest_version": 1,
   "action": {
     "title": "NPC Generator",
@@ -11,6 +11,5 @@
     "popover": "/",
     "height": 600,
     "width": 400
-  },
-  "background_scripts": ["script.js"]
+  }
 }
