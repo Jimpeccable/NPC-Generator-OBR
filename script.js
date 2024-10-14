@@ -451,14 +451,14 @@ function updateFeatureAccess() {
     }
 }
 
-// Make sure these functions are in the global scope
+// Expose necessary functions to the global scope
 window.updateNPCMet = updateNPCMet;
 window.updateLocationVisited = updateLocationVisited;
 window.updateNPCTrust = updateNPCTrust;
 window.updateTrustLabel = updateTrustLabel;
 
 // Initialize the application
-document.addEventListener('DOMContentLoaded', () => {
+function initApp() {
     // Add event listeners to buttons
     const buttons = {
         'generateNPCBtn': generateNPC,
@@ -520,4 +520,15 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFeatureAccess();
     displayVisitedItems();
     updateClearButtonVisibility();
-});
+}
+
+// Call initApp when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', initApp);
+
+// Export functions that need to be accessed globally
+export {
+    updateNPCMet,
+    updateLocationVisited,
+    updateNPCTrust,
+    updateTrustLabel
+};
