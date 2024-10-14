@@ -4,8 +4,6 @@
     --text-primary: #FFFFFF; /* White text */
     --text-secondary: #BFC0C0; /* Light grey */
     --accent: #EF8354; /* Orange for buttons */
-    --trust-negative: #e94560; /* Red for negative trust */
-    --trust-positive: #0f3460; /* Blue for positive trust */
 }
 
 body {
@@ -49,40 +47,6 @@ main {
     display: grid;
     grid-template-rows: auto 1fr auto;
     gap: 20px;
-}
-
-.tab-container {
-    background-color: var(--bg-secondary);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.tab-buttons {
-    display: flex;
-    background-color: var(--bg-primary);
-}
-
-.tab-button {
-    background-color: transparent;
-    border: none;
-    color: var(--text-secondary);
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.tab-button.active {
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
-}
-
-.tab-content {
-    display: none;
-    padding: 20px;
-}
-
-.tab-content.active {
-    display: block;
 }
 
 .generator-panel, .info-panel, .action-panel {
@@ -129,10 +93,21 @@ select {
 .event-generator {
     display: flex;
     gap: 10px;
+    align-items: center;
 }
 
 .event-generator select {
     flex-grow: 1;
+}
+
+.event-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.event-buttons button {
+    padding: 5px 10px;
+    font-size: 12px;
 }
 
 .info-box {
@@ -143,6 +118,10 @@ select {
     background-color: rgba(255, 255, 255, 0.05);
     border-radius: 4px;
     padding: 15px;
+}
+
+.info-content p {
+    margin: 5px 0;
 }
 
 .action-panel {
@@ -190,40 +169,104 @@ aside {
     color: rgba(255, 255, 255, 0.7);
 }
 
-/* NPC Trust System Styles */
+/* NPC Trust Styles */
+#trust-tab {
+    display: none;
+}
+
+#trust-tab.active {
+    display: block;
+}
+
+.trust-description {
+    margin-bottom: 20px;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+#selectedNPCInfo {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+#npcInfo, #locationInfo, #eventInfo {
+    display: none;
+}
+
+#generate-tab.active #npcInfo,
+#generate-tab.active #locationInfo,
+#generate-tab.active #eventInfo {
+    display: block;
+}
+
 #npcTrustList {
     list-style-type: none;
     padding: 0;
 }
 
 .npc-trust-item {
-    display: flex;
-    align-items: center;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.npc-name {
+    font-weight: bold;
     margin-bottom: 10px;
+    display: block;
 }
 
-.npc-trust-item span {
-    flex: 1;
+.trust-slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.npc-trust-item input[type="range"] {
-    flex: 2;
-    margin: 0 10px;
+.trust-slider-container input[type="range"] {
+    width: 100%;
+    margin: 10px 0;
 }
 
-.npc-trust-item .trust-value {
-    width: 20px;
+.trust-labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    margin-top: 5px;
+}
+
+.trust-min {
+    text-align: left;
+}
+
+.trust-max {
+    text-align: right;
+}
+
+.trust-value {
     text-align: center;
+    font-weight: bold;
+    color: var(--accent);
+    margin-top: 5px;
 }
 
-/* Custom range input styling */
 input[type="range"] {
     -webkit-appearance: none;
     width: 100%;
     height: 10px;
     border-radius: 5px;
-    background: linear-gradient(to right, var(--trust-negative), #ffffff, var(--trust-positive));
+    background: linear-gradient(to right, #e94560, #ffffff, #0f3460);
     outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+input[type="range"]:hover {
+    opacity: 1;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -244,24 +287,76 @@ input[type="range"]::-moz-range-thumb {
     cursor: pointer;
 }
 
-/* Patreon tab styles */
-#patreonCode {
+/* Tab styles */
+.tab-buttons {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 8px 8px 0 0;
+    margin-right: 5px;
+}
+
+.tab-button.active {
+    background-color: var(--accent);
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+    background-color: var(--bg-secondary);
+    border-radius: 0 0 8px 8px;
+}
+
+.tab-content.active {
     display: block;
+}
+
+/* Patreon section */
+.patreon-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.patreon-locked {
+    display: none;
+}
+
+#patreonCode {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     margin-bottom: 10px;
     border: 1px solid var(--accent);
     background-color: var(--bg-primary);
     color: var(--text-primary);
-    border-radius: 4px;
 }
 
 #unlockFeaturesBtn {
-    display: block;
     width: 100%;
 }
 
-@media (max-width: 850px) {
+/* Visited items */
+#visitedItems {
+    margin-top: 20px;
+}
+
+#visitedNPCsList, #visitedLocationsList {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+#visitedNPCsList li, #visitedLocationsList li {
+    margin-bottom: 5px;
+}
+
+@media (max-width: 768px) {
     #app {
         grid-template-columns: 1fr;
         grid-template-areas: 
@@ -269,4 +364,16 @@ input[type="range"]::-moz-range-thumb {
             "main"
             "aside";
     }
+}
+
+#noticeboardContent ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#noticeboardContent li {
+    background-color: rgba(255, 255, 255, 0.05);
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 4px;
 }
