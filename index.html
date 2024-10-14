@@ -53,7 +53,7 @@
 
             <div id="trust-tab" class="tab-content">
                 <h2>NPC Trust System</h2>
-                <p>The NPC Trust System allows you to track how each NPC feels about the party. The scale ranges from 0 (overt enemy) to 8 (devoted ally). Use the sliders to adjust the trust level as your campaign progresses.</p>
+                <p class="trust-description">The NPC Trust System allows you to track how each NPC feels about the party. The scale ranges from 0 (overt enemy) to 8 (devoted ally). Use the sliders to adjust the trust level as your campaign progresses.</p>
                 <div id="selectedNPCInfo"></div>
                 <div id="npcTrustList"></div>
             </div>
@@ -65,13 +65,15 @@
                     <button id="streetGossipBtn" class="patreon-locked">Street Gossip</button>
                     <button id="townNoticesBtn" class="patreon-locked">Town Notices</button>
                 </div>
-                <div id="noticeboardContent" class="info-box"></div>
+                <div id="noticeboardContent" class="info-box patreon-locked"></div>
             </div>
 
             <div id="patreon-tab" class="tab-content">
                 <h2>Unlock Premium Features</h2>
-                <input type="text" id="patreonCode" placeholder="Enter Patreon Code">
-                <button id="unlockFeaturesBtn">Unlock Features</button>
+                <div class="patreon-section">
+                    <input type="text" id="patreonCode" placeholder="Enter Patreon Code">
+                    <button id="unlockFeaturesBtn">Unlock Features</button>
+                </div>
             </div>
         </main>
 
@@ -93,13 +95,11 @@
                 <ul id="visitedLocationsList"></ul>
             </div>
         </aside>
+
+        <footer>
+            <img src="Patreon.png" alt="Patreon Logo" style="width: auto; height: 100px;">
+            <a href="https://www.patreon.com/Jimpeccable" target="_blank">Unlock features through Patreon, now!</a>
+        </footer>
     </div>
-
-    <footer>
-        <img src="Patreon.png" alt="Patreon Logo" style="width: auto; height: 100px;">
-        <a href="https://www.patreon.com/Jimpeccable" target="_blank">Unlock features through Patreon, now!</a>
-    </footer>
-
-    <script src="script.js"></script>
 </body>
 </html>
