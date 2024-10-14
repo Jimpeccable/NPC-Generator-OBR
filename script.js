@@ -268,9 +268,21 @@ function updateSavedNPCsList() {
 function updateSavedLocationsList() {
     const savedLocations = JSON.parse(localStorage.getItem('savedLocations')) || {};
     const savedLocationsList = document.getElementById('savedLocationsList');
-    savedLocationsList.appendChild(li);
-}
-updateClearButtonVisibility();
+    savedLocationsList.innerHTML = ''; // Clear the list first
+    for (let locationName in savedLocations) {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <div class="saved-item-name">${savedLocations[locationName].name}</div>
+            <label><input type="checkbox" ${savedLocations[locationName].visited ? 'checked' : ''} onchange="updateLocationVisited('${locationName}', this.checked)"> Visited</label>
+        `;
+        li.addEventListener('click', (event) => {
+            if (event.target.tagName !== 'INPUT') {
+                loadLocation(locationName);
+            }
+        });
+        savedLocationsList.appendChild(li);
+    }
+    updateClearButtonVisibility();
 }
 
 function updateNPCTrustList() {
@@ -438,6 +450,12 @@ function updateFeatureAccess() {
         unlockFeaturesBtn.textContent = isUnlocked ? 'Change Patreon Code' : 'Unlock Patreon Features';
     }
 }
+
+// Make sure these functions are in the global scope
+window.updateNPCMet = updateNPCMet;
+window.updateLocationVisited = updateLocationVisited;
+window.updateNPCTrust = updateNPCTrust;
+window.updateTrustLabel = updateTrustLabel;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
