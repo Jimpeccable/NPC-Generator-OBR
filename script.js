@@ -719,6 +719,78 @@ function clearSavedLocations() {
     displayVisitedItems();
 }
 
+const NOTICEBOARDS_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ97oEz8hWLDsmt0rNCGJOfby-jyXfGn846EHQwKTCrHeUFYWiY1g4lK3Ti1vreTpwUswWpT6KzPm98/pub?gid=1&single=true&output=csv';
+let noticeboardsData = {
+    tavernNotices: [],
+    streetGossip: [],
+    townNotices: []
+};
+
+async function fetchNoticeboardsData() {
+    try {
+        const response = await fetch(NOTICEBOARDS_SHEET_URL);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.text();
+        const rows = data.split('\n').slice(1); // Skip header row
+        rows.forEach(row => {
+            const [tavernNotice, streetGossip, townNotice] = row.split(',').map(item => item.trim());
+            if (tavernNotice) noticeboardsData.tavernNotices.push(tavernNotice);
+            if (streetGossip) noticeboardsData.streetGossip.push(streetGossip);
+            if (townNotice) noticeboardsData.townNotices.push(townNotice);
+        });
+        console.log('Noticeboards data fetched successfully:', noticeboardsData);
+    } catch (error) {
+        console.error('Error fetching noticeboards data:', error);
+        alert('Failed to fetch noticeboards data. Please try again later.');
+    }
+}
+
+function generateTavernNotices() {
+    if (!isPatreonUnlocked()) {
+        alert("This feature is locked. Please unlock with a valid Patreon code.");
+        return;
+    }
+    if (noticeboardsData.tavernNotices.length === 0) {
+        alert("No tavern notices available. Please try again later.");
+        return;
+    }
+    const notices = getRandomElements(noticeboardsData.tavernNotices, 5);
+    displayNotices('Tavern Notices', notices);
+}
+
+function generateStreetGossip() {
+    if (!isPatreonUnlocked()) {
+        alert("This feature is locked. Please unlock with a valid Patreon code.");
+        return;
+    }
+    if (noticeboardsData.streetGossip.length === 0) {
+        alert("No street gossip available. Please try again later.");
+        return;
+    }
+    const gossip = getRandomElement(noticeboardsData.streetGossip);
+    displayNotices('Street Gossip', [gossip]);
+}
+
+function generateTownNotices() {
+    if (!isPatreonUnlocked()) {
+        alert("This feature is locked. Please unlock with a valid Patreon code.");
+        return;
+    }
+    if (noticeboardsData.townNotices.length === 0) {
+        alert("No town notices available. Please try again later.");
+        return;
+    }
+    const notices = getRandomElements(noticeboardsData.townNotices, 5);
+    displayNotices('Town Notices', notices);
+}
+
+function getRandomElements(array, count) {
+    const shuffled = array.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+}
+
 // Patreon Functions
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ97oEz8hWLDsmt0rNCGJOfby-jyXfGn846EHQwKTCrHeUFYWiY1g4lK3Ti1vreTpwUswWpT6KzPm98/pub?output=csv';
 
@@ -822,6 +894,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set the initial active tab
     switchTab('generate-tab');
+
+    // Add event listeners for new buttons
+    const newButtons = {
+        'tavernNoticesBtn': generateTavernNotices,
+        'streetGossipBtn': generateStreetGossip,
+        'townNoticesBtn': generateTownNotices,
+    };
+
+    for (const [id, func] of Object.entries(newButtons)) {
+        const button = document.getElementById(id);
+        if (button) {
+            button.addEventListener('click', func);
+        }
+    }
+
+    // Fetch noticeboards data
+    fetchNoticeboardsData();
 
     // Set up region select
     const regionSelect = document.getElementById('regionSelect');
