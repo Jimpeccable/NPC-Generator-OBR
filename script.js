@@ -422,6 +422,17 @@ function initializeExtension() {
     });
 }
 
+// Call this function when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.OBR) {
+        initializeExtension();
+    } else {
+        console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
+        // Optionally, you can still initialize some parts of your app:
+        initializeApp();
+    }
+});
+
 function initializeApp() {
     if (!isGM) {
         console.log("This extension is only available to the GM.");
@@ -744,11 +755,6 @@ function displayVisitedItems() {
 
 // Save and Load Functions
 function saveNPC() {
-    if (!isGM || !isPatreonUnlocked()) {
-        console.log("This feature is not available.");
-        return;
-    }
-    
     const npcInfo = document.getElementById('npcInfo').innerHTML;
     if (!npcInfo.trim()) return;
     
@@ -766,10 +772,6 @@ function saveNPC() {
 }
 
 function saveLocation() {
-    if (!isGM || !isPatreonUnlocked()) {
-        console.log("This feature is not available.");
-        return;
-    }
     const locationInfo = document.getElementById('locationInfo').innerHTML;
     if (!locationInfo.trim()) return;
     const locationName = locationInfo.match(/<h2>(.*?)<\/h2>/)[1];
@@ -981,15 +983,6 @@ async function unlockFeatures() {
 function updateFeatureAccess() {
     const isUnlocked = isPatreonUnlocked();
     const lockedElements = document.querySelectorAll('.patreon-locked');
-    const noticeboardsTab = document.getElementById('noticeboards-tab');
-if (noticeboardsTab) {
-    const noticeboardsContent = noticeboardsTab.querySelector('#noticeboards-content');
-    const noticeboardsDescription = noticeboardsTab.querySelector('#noticeboards-description');
-    if (noticeboardsContent && noticeboardsDescription) {
-        noticeboardsContent.style.display = isUnlocked ? 'block' : 'none';
-        noticeboardsDescription.style.display = isUnlocked ? 'none' : 'block';
-    }
-}
     lockedElements.forEach(el => {
         el.style.display = isUnlocked ? 'inline-block' : 'none';
     });
@@ -1005,6 +998,14 @@ if (noticeboardsTab) {
     if (noticeboardsContent && noticeboardsDescription) {
         noticeboardsContent.style.display = isUnlocked ? 'block' : 'none';
         noticeboardsDescription.style.display = isUnlocked ? 'none' : 'block';
+    }
+
+    // Update save buttons text
+    const saveNPCBtn = document.getElementById('saveNPCBtn');
+    const saveLocationBtn = document.getElementById('saveLocationBtn');
+    if (saveNPCBtn && saveLocationBtn) {
+        saveNPCBtn.textContent = isUnlocked ? 'Save NPC' : 'Generate NPC';
+        saveLocationBtn.textContent = isUnlocked ? 'Save Location' : 'Generate Location';
     }
 }
 
