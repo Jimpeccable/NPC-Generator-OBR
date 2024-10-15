@@ -1069,7 +1069,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFeatureAccess();
     displayVisitedItems();
     updateClearButtonVisibility();
-}
+
 if (window.OBR) {
     initializeExtension();
 } else {
