@@ -406,8 +406,9 @@ const trustLevels = [
     "Devoted Ally"
 ];
 
+let isGM = false;
+
 function initializeExtension() {
-    let isGM = false;
     OBR.onReady(() => {
         OBR.player.getRole().then(role => {
             isGM = role === "GM";
@@ -422,6 +423,10 @@ function initializeExtension() {
 }
 
 function initializeApp() {
+    if (!isGM) {
+        console.log("This extension is only available to the GM.");
+        return;
+    }
     // Add event listeners to buttons
     const buttons = {
         'generateNPCBtn': generateNPC,
@@ -743,14 +748,18 @@ function saveNPC() {
         console.log("This feature is not available.");
         return;
     }
+    
     const npcInfo = document.getElementById('npcInfo').innerHTML;
     if (!npcInfo.trim()) return;
+    
     const npcName = npcInfo.match(/<h3>(.*?)<\/h3>/)[1];
     const npcRace = npcInfo.match(/<strong>Race:<\/strong> (.*?) \|/)[1];
     const npcAge = npcInfo.match(/<strong>Age:<\/strong> (.*?)<\/p>/)[1];
+    
     let savedNPCs = JSON.parse(localStorage.getItem('savedNPCs')) || {};
     savedNPCs[npcName] = { name: npcName, race: npcRace, age: npcAge, info: npcInfo, met: false, trust: 4 };
     localStorage.setItem('savedNPCs', JSON.stringify(savedNPCs));
+    
     updateSavedNPCsList();
     updateNPCTrustList();
     alert(`NPC "${npcName}" has been saved!`);
@@ -1060,12 +1069,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFeatureAccess();
     displayVisitedItems();
     updateClearButtonVisibility();
-
+}
 if (window.OBR) {
-    document.addEventListener('DOMContentLoaded', () => {
-        initializeExtension();
-    });
+    initializeExtension();
 } else {
     console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
+    // Optionally, you can still initialize some parts of your app:
+    document.addEventListener('DOMContentLoaded', initializeApp);
 }
 });
