@@ -755,6 +755,11 @@ function displayVisitedItems() {
 
 // Save and Load Functions
 function saveNPC() {
+    if (!isGM || !isPatreonUnlocked()) {
+        alert("This feature is only available to GMs with a valid Patreon code.");
+        return;
+    }
+    
     const npcInfo = document.getElementById('npcInfo').innerHTML;
     if (!npcInfo.trim()) return;
     
@@ -772,6 +777,11 @@ function saveNPC() {
 }
 
 function saveLocation() {
+    if (!isGM || !isPatreonUnlocked()) {
+        alert("This feature is only available to GMs with a valid Patreon code.");
+        return;
+    }
+    
     const locationInfo = document.getElementById('locationInfo').innerHTML;
     if (!locationInfo.trim()) return;
     const locationName = locationInfo.match(/<h2>(.*?)<\/h2>/)[1];
@@ -1000,17 +1010,32 @@ function updateFeatureAccess() {
         noticeboardsDescription.style.display = isUnlocked ? 'none' : 'block';
     }
 
-    // Update save buttons text
+    // Update save buttons text and visibility
     const saveNPCBtn = document.getElementById('saveNPCBtn');
     const saveLocationBtn = document.getElementById('saveLocationBtn');
     if (saveNPCBtn && saveLocationBtn) {
-        saveNPCBtn.textContent = isUnlocked ? 'Save NPC' : 'Generate NPC';
-        saveLocationBtn.textContent = isUnlocked ? 'Save Location' : 'Generate Location';
+        if (isUnlocked) {
+            saveNPCBtn.style.display = 'inline-block';
+            saveLocationBtn.style.display = 'inline-block';
+            saveNPCBtn.textContent = 'Save NPC';
+            saveLocationBtn.textContent = 'Save Location';
+        } else {
+            saveNPCBtn.style.display = 'none';
+            saveLocationBtn.style.display = 'none';
+        }
     }
 }
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.OBR) {
+        initializeExtension();
+    } else {
+        console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
+        document.body.innerHTML = '<h1>Error: Owlbear Rodeo SDK not loaded.</h1>';
+    }
+
+    // Rest of your initialization code...
     // Add event listeners to buttons
     const buttons = {
         'generateNPCBtn': generateNPC,
@@ -1070,12 +1095,4 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFeatureAccess();
     displayVisitedItems();
     updateClearButtonVisibility();
-
-if (window.OBR) {
-    initializeExtension();
-} else {
-    console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
-    // Optionally, you can still initialize some parts of your app:
-    document.addEventListener('DOMContentLoaded', initializeApp);
-}
 });
