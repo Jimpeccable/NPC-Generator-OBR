@@ -409,6 +409,12 @@ const trustLevels = [
 let isGM = false;
 
 function initializeExtension() {
+    if (typeof OBR === 'undefined') {
+        console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
+        document.body.innerHTML = '<h1>Error: Owlbear Rodeo SDK not loaded. This extension requires Owlbear Rodeo to function.</h1>';
+        return;
+    }
+
     OBR.onReady(() => {
         OBR.player.getRole().then(role => {
             isGM = role === "GM";
@@ -424,12 +430,11 @@ function initializeExtension() {
 
 // Call this function when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.OBR) {
+    if (typeof OBR !== 'undefined') {
         initializeExtension();
     } else {
         console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
-        // Optionally, you can still initialize some parts of your app:
-        initializeApp();
+        document.body.innerHTML = '<h1>Error: Owlbear Rodeo SDK not loaded. This extension requires Owlbear Rodeo to function.</h1>';
     }
 });
 
@@ -483,11 +488,15 @@ function initializeApp() {
 
     // Set up region select
     const regionSelect = document.getElementById('regionSelect');
-    for (const region in regions) {
-        const option = document.createElement('option');
-        option.value = region;
-        option.textContent = region;
-        regionSelect.appendChild(option);
+    if (regionSelect) {
+        for (const region in regions) {
+            const option = document.createElement('option');
+            option.value = region;
+            option.textContent = region;
+            regionSelect.appendChild(option);
+        }
+    } else {
+        console.error("regionSelect element not found");
     }
 
     // Initialize the application state
@@ -813,22 +822,51 @@ function loadLocation(locationName) {
 function updateSavedNPCsList() {
     const savedNPCs = JSON.parse(localStorage.getItem('savedNPCs')) || {};
     const savedNPCsList = document.getElementById('savedNPCsList');
-    savedNPCsList.innerHTML = '';
-    for (let npcName in savedNPCs) {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            <div class="saved-item-name">${savedNPCs[npcName].name}</div>
-            <div class="saved-item-details">${savedNPCs[npcName].race}, ${savedNPCs[npcName].age} years old</div>
-            <label><input type="checkbox" ${savedNPCs[npcName].met ? 'checked' : ''} onchange="updateNPCMet('${npcName}', this.checked)"> Met</label>
-        `;
-        li.addEventListener('click', (event) => {
-            if (event.target.tagName !== 'INPUT') {
-                loadNPC(npcName);
-            }
-        });
-        savedNPCsList.appendChild(li);
+    
+    if (!savedNPCsList) {
+        console.error("savedNPCsList element not found");
+        return;
     }
+    
+    savedNPCsList.innerHTML = '';
+    
+    for (let npcName in savedNPCs) {
+        if (savedNPCs.hasOwnProperty(npcName)) {
+            const npc = savedNPCs[npcName];
+            
+            if (!npc || typeof npc !== 'object') {
+                console.error(`Invalid NPC data for ${npcName}`);
+                continue;
+            }
+            
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <div class="saved-item-name">${escapeHtml(npc.name || '')}</div>
+                <div class="saved-item-details">${escapeHtml(npc.race || '')}, ${escapeHtml(npc.age ? npc.age + ' years old' : '')}</div>
+                <label><input type="checkbox" ${npc.met ? 'checked' : ''} onchange="updateNPCMet('${escapeHtml(npcName)}', this.checked)"> Met</label>
+            `;
+            
+            li.addEventListener('click', (event) => {
+                if (event.target.tagName !== 'INPUT') {
+                    loadNPC(npcName);
+                }
+            });
+            
+            savedNPCsList.appendChild(li);
+        }
+    }
+    
     updateClearButtonVisibility();
+}
+
+// Helper function to escape HTML special characters
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
 }
 
 function updateSavedLocationsList() {
