@@ -1,10 +1,3 @@
-// Function to initialize the NPC Generator
-function initNPCGenerator() {
-
-
-
-
-
 const firstNames = [
     "Alice", "Bob", "Charlie", "Diana", "Ethan", "Fiona", "George", "Hannah", 
   "Iris", "Jasper", "Kara", "Liam", "Mira", "Noah", "Olivia", "Piper", 
@@ -949,4 +942,3 @@ document.addEventListener('DOMContentLoaded', () => {
     displayVisitedItems();
     updateClearButtonVisibility();
 });
-}
