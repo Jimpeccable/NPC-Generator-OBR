@@ -62,7 +62,7 @@
                 <h2>Noticeboards/Quests</h2>
                 <p id="noticeboards-description" class="patreon-locked">This feature is locked. Please unlock with a valid Patreon code.</p>
                 <div id="noticeboards-content" class="patreon-locked">
-                    <div class="button-group patreon-locked">
+                    <div class="button-group">
                         <button id="tavernNoticesBtn">Tavern Notices</button>
                         <button id="streetGossipBtn">Street Gossip</button>
                         <button id="townNoticesBtn">Town Notices</button>
@@ -109,6 +109,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Fetch player data from Owlbear Rodeo SDK
             OwlbearRodeoAPI.getPlayer().then(player => {
+                console.log('Player data:', player); // Debugging log
+
                 // Function to show or hide GM content
                 function toggleGMContent(player) {
                     const gmContent = document.querySelectorAll('.gm-only');
