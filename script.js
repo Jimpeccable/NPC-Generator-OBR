@@ -1060,17 +1060,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFeatureAccess();
     displayVisitedItems();
     updateClearButtonVisibility();
-}
+
 if (window.OBR) {
-    OBR.onReady(() => {
-        OBR.player.getRole().then(role => {
-            if (role === "GM") {
-                document.body.classList.add('gm-view');
-                initializeExtension();
-            } else {
-                document.body.innerHTML = '<h1>This extension is only available to the GM.</h1>';
-            }
-        });
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeExtension();
     });
 } else {
     console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
