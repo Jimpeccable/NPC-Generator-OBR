@@ -410,7 +410,7 @@ input[type="range"]::-moz-range-thumb {
     scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
 }
 
-#patreon-section {
+#patreon-section-footer {
     grid-column: 1 / -1;  /* This makes it span across all columns */
     display: flex;
     flex-direction: column;
@@ -420,11 +420,11 @@ input[type="range"]::-moz-range-thumb {
     text-align: center;
 }
 
-#patreon-section img {
+#patreon-section-footer img {
     margin-bottom: 15px;
 }
 
-#patreon-section a {
+#patreon-section-footer a {
     color: var(--accent);
     text-decoration: none;
     font-weight: bold;
@@ -432,6 +432,6 @@ input[type="range"]::-moz-range-thumb {
     transition: color 0.3s;
 }
 
-#patreon-section a:hover {
+#patreon-section-footer a:hover {
     color: #ff9b74;
 }
