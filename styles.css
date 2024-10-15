@@ -331,10 +331,30 @@ input[type="range"]::-moz-range-thumb {
 }
 
 
+
 /* Patreon section */
 .patreon-section {
     margin-top: 20px;
     text-align: center;
+}
+
+body:not(.gm-view) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Lato', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+body:not(.gm-view) h1 {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .patreon-locked {
@@ -441,3 +461,4 @@ input[type="range"]::-moz-range-thumb {
 #patreon-section-footer a:hover {
     color: #ff9b74;
 }
+
