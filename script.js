@@ -409,12 +409,6 @@ const trustLevels = [
 let isGM = false;
 
 function initializeExtension() {
-    if (typeof OBR === 'undefined') {
-        console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
-        document.body.innerHTML = '<h1>Error: Owlbear Rodeo SDK not loaded. This extension requires Owlbear Rodeo to function.</h1>';
-        return;
-    }
-
     OBR.onReady(() => {
         OBR.player.getRole().then(role => {
             isGM = role === "GM";
@@ -430,11 +424,12 @@ function initializeExtension() {
 
 // Call this function when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof OBR !== 'undefined') {
+    if (window.OBR) {
         initializeExtension();
     } else {
         console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
-        document.body.innerHTML = '<h1>Error: Owlbear Rodeo SDK not loaded. This extension requires Owlbear Rodeo to function.</h1>';
+        // Optionally, you can still initialize some parts of your app:
+        initializeApp();
     }
 });
 
@@ -488,15 +483,11 @@ function initializeApp() {
 
     // Set up region select
     const regionSelect = document.getElementById('regionSelect');
-    if (regionSelect) {
-        for (const region in regions) {
-            const option = document.createElement('option');
-            option.value = region;
-            option.textContent = region;
-            regionSelect.appendChild(option);
-        }
-    } else {
-        console.error("regionSelect element not found");
+    for (const region in regions) {
+        const option = document.createElement('option');
+        option.value = region;
+        option.textContent = region;
+        regionSelect.appendChild(option);
     }
 
     // Initialize the application state
@@ -506,17 +497,6 @@ function initializeApp() {
     updateFeatureAccess();
     displayVisitedItems();
     updateClearButtonVisibility();
-
-    // Add event listeners for the new buttons
-    document.getElementById('tavernNoticesBtn').addEventListener('click', () => {
-        displayNotices('tavernNotices');
-    });
-    document.getElementById('streetGossipBtn').addEventListener('click', () => {
-        displayNotices('streetGossip');
-    });
-    document.getElementById('townNoticesBtn').addEventListener('click', () => {
-        displayNotices('townNotices');
-    });
 }
 
 // Utility Functions
@@ -764,11 +744,6 @@ function displayVisitedItems() {
 
 // Save and Load Functions
 function saveNPC() {
-    if (!isGM || !isPatreonUnlocked()) {
-        alert("This feature is only available to GMs with a valid Patreon code.");
-        return;
-    }
-    
     const npcInfo = document.getElementById('npcInfo').innerHTML;
     if (!npcInfo.trim()) return;
     
@@ -786,11 +761,6 @@ function saveNPC() {
 }
 
 function saveLocation() {
-    if (!isGM || !isPatreonUnlocked()) {
-        alert("This feature is only available to GMs with a valid Patreon code.");
-        return;
-    }
-    
     const locationInfo = document.getElementById('locationInfo').innerHTML;
     if (!locationInfo.trim()) return;
     const locationName = locationInfo.match(/<h2>(.*?)<\/h2>/)[1];
@@ -822,51 +792,22 @@ function loadLocation(locationName) {
 function updateSavedNPCsList() {
     const savedNPCs = JSON.parse(localStorage.getItem('savedNPCs')) || {};
     const savedNPCsList = document.getElementById('savedNPCsList');
-    
-    if (!savedNPCsList) {
-        console.error("savedNPCsList element not found");
-        return;
-    }
-    
     savedNPCsList.innerHTML = '';
-    
     for (let npcName in savedNPCs) {
-        if (savedNPCs.hasOwnProperty(npcName)) {
-            const npc = savedNPCs[npcName];
-            
-            if (!npc || typeof npc !== 'object') {
-                console.error(`Invalid NPC data for ${npcName}`);
-                continue;
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <div class="saved-item-name">${savedNPCs[npcName].name}</div>
+            <div class="saved-item-details">${savedNPCs[npcName].race}, ${savedNPCs[npcName].age} years old</div>
+            <label><input type="checkbox" ${savedNPCs[npcName].met ? 'checked' : ''} onchange="updateNPCMet('${npcName}', this.checked)"> Met</label>
+        `;
+        li.addEventListener('click', (event) => {
+            if (event.target.tagName !== 'INPUT') {
+                loadNPC(npcName);
             }
-            
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <div class="saved-item-name">${escapeHtml(npc.name || '')}</div>
-                <div class="saved-item-details">${escapeHtml(npc.race || '')}, ${escapeHtml(npc.age ? npc.age + ' years old' : '')}</div>
-                <label><input type="checkbox" ${npc.met ? 'checked' : ''} onchange="updateNPCMet('${escapeHtml(npcName)}', this.checked)"> Met</label>
-            `;
-            
-            li.addEventListener('click', (event) => {
-                if (event.target.tagName !== 'INPUT') {
-                    loadNPC(npcName);
-                }
-            });
-            
-            savedNPCsList.appendChild(li);
-        }
+        });
+        savedNPCsList.appendChild(li);
     }
-    
     updateClearButtonVisibility();
-}
-
-// Helper function to escape HTML special characters
-function escapeHtml(unsafe) {
-    return unsafe
-         .replace(/&/g, "&amp;")
-         .replace(/</g, "&lt;")
-         .replace(/>/g, "&gt;")
-         .replace(/"/g, "&quot;")
-         .replace(/'/g, "&#039;");
 }
 
 function updateSavedLocationsList() {
@@ -1048,32 +989,17 @@ function updateFeatureAccess() {
         noticeboardsDescription.style.display = isUnlocked ? 'none' : 'block';
     }
 
-    // Update save buttons text and visibility
+    // Update save buttons text
     const saveNPCBtn = document.getElementById('saveNPCBtn');
     const saveLocationBtn = document.getElementById('saveLocationBtn');
     if (saveNPCBtn && saveLocationBtn) {
-        if (isUnlocked) {
-            saveNPCBtn.style.display = 'inline-block';
-            saveLocationBtn.style.display = 'inline-block';
-            saveNPCBtn.textContent = 'Save NPC';
-            saveLocationBtn.textContent = 'Save Location';
-        } else {
-            saveNPCBtn.style.display = 'none';
-            saveLocationBtn.style.display = 'none';
-        }
+        saveNPCBtn.textContent = isUnlocked ? 'Save NPC' : 'Generate NPC';
+        saveLocationBtn.textContent = isUnlocked ? 'Save Location' : 'Generate Location';
     }
 }
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.OBR) {
-        initializeExtension();
-    } else {
-        console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
-        document.body.innerHTML = '<h1>Error: Owlbear Rodeo SDK not loaded.</h1>';
-    }
-
-    // Rest of your initialization code...
     // Add event listeners to buttons
     const buttons = {
         'generateNPCBtn': generateNPC,
@@ -1133,4 +1059,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFeatureAccess();
     displayVisitedItems();
     updateClearButtonVisibility();
+
+if (window.OBR) {
+    initializeExtension();
+} else {
+    console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
+    // Optionally, you can still initialize some parts of your app:
+    document.addEventListener('DOMContentLoaded', initializeApp);
+}
 });
