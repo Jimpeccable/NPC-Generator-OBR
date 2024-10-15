@@ -406,9 +406,8 @@ const trustLevels = [
     "Devoted Ally"
 ];
 
-let isGM = false;
-
-document.addEventListener('DOMContentLoaded', () => {
+function initializeExtension() {
+    let isGM = false;
     OBR.onReady(() => {
         OBR.player.getRole().then(role => {
             isGM = role === "GM";
@@ -420,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-});
+}
 
 function initializeApp() {
     // Add event listeners to buttons
@@ -1061,4 +1060,19 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFeatureAccess();
     displayVisitedItems();
     updateClearButtonVisibility();
+}
+if (window.OBR) {
+    OBR.onReady(() => {
+        OBR.player.getRole().then(role => {
+            if (role === "GM") {
+                document.body.classList.add('gm-view');
+                initializeExtension();
+            } else {
+                document.body.innerHTML = '<h1>This extension is only available to the GM.</h1>';
+            }
+        });
+    });
+} else {
+    console.error("OBR is not defined. Make sure the Owlbear Rodeo SDK is properly loaded.");
+}
 });
