@@ -993,8 +993,8 @@ function updateFeatureAccess() {
     const saveNPCBtn = document.getElementById('saveNPCBtn');
     const saveLocationBtn = document.getElementById('saveLocationBtn');
     if (saveNPCBtn && saveLocationBtn) {
-        saveNPCBtn.textContent = isUnlocked ? 'Save NPC' : 'Generate NPC';
-        saveLocationBtn.textContent = isUnlocked ? 'Save Location' : 'Generate Location';
+        saveNPCBtn.textContent = isUnlocked ? 'Save NPC' : 'Save NPC';
+        saveLocationBtn.textContent = isUnlocked ? 'Save Location' : 'Save Location';
     }
 }
 
