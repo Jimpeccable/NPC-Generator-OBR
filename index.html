@@ -62,7 +62,7 @@
                 <h2>Noticeboards/Quests</h2>
                 <p id="noticeboards-description" class="patreon-locked">This feature is locked. Please unlock with a valid Patreon code.</p>
                 <div id="noticeboards-content" class="patreon-locked">
-                    <div class="button-group">
+                    <div class="button-group patreon-locked">
                         <button id="tavernNoticesBtn">Tavern Notices</button>
                         <button id="streetGossipBtn">Street Gossip</button>
                         <button id="townNoticesBtn">Town Notices</button>
@@ -107,31 +107,25 @@
     </footer>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Example player object
-            const player = {
-                id: "player1",
-                connectionId: "conn1",
-                role: "GM", // or "PLAYER"
-                selection: [],
-                color: "#ff0000",
-                syncView: true,
-                metadata: {}
-            };
+            // Fetch player data from Owlbear Rodeo SDK
+            OwlbearRodeoAPI.getPlayer().then(player => {
+                // Function to show or hide GM content
+                function toggleGMContent(player) {
+                    const gmContent = document.querySelectorAll('.gm-only');
+                    gmContent.forEach(element => {
+                        if (player.role === "GM") {
+                            element.style.display = 'block';
+                        } else {
+                            element.style.display = 'none';
+                        }
+                    });
+                }
 
-            // Function to show or hide GM content
-            function toggleGMContent(player) {
-                const gmContent = document.querySelectorAll('.gm-only');
-                gmContent.forEach(element => {
-                    if (player.role === "GM") {
-                        element.style.display = 'block';
-                    } else {
-                        element.style.display = 'none';
-                    }
-                });
-            }
-
-            // Call the function with the player object
-            toggleGMContent(player);
+                // Call the function with the player object
+                toggleGMContent(player);
+            }).catch(error => {
+                console.error('Error fetching player data:', error);
+            });
         });
     </script>
     <script type="module" src="script.js"></script>
