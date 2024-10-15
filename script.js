@@ -1,26 +1,3 @@
-import OBR from '@owlbear-rodeo/sdk';
-
-// Function to initialize the extension
-async function initializeExtension() {
-  // Get the player's role
-  const player = await OBR.player.getPlayer();
-  const isGM = player.role === 'GM';
-
-  if (isGM) {
-    // The user is a GM, show the extension
-    document.body.style.display = 'block';
-    // Initialize your extension here
-    initNPCGenerator();
-  } else {
-    // The user is not a GM, hide the extension
-    document.body.style.display = 'none';
-    console.log('This extension is only available to GMs.');
-  }
-}
-
-// Run the initialization when the document is ready
-OBR.onReady(() => initializeExtension());
-
 // Function to initialize the NPC Generator
 function initNPCGenerator() {
 
