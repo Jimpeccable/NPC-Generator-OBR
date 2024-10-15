@@ -406,6 +406,95 @@ const trustLevels = [
     "Devoted Ally"
 ];
 
+let isGM = false;
+
+document.addEventListener('DOMContentLoaded', () => {
+    OBR.onReady(() => {
+        OBR.player.getRole().then(role => {
+            isGM = role === "GM";
+            if (isGM) {
+                document.body.classList.add('gm-view');
+                initializeApp();
+            } else {
+                document.body.innerHTML = '<h1>This extension is only available to the GM.</h1>';
+            }
+        });
+    });
+});
+
+function initializeApp() {
+    // Add event listeners to buttons
+    const buttons = {
+        'generateNPCBtn': generateNPC,
+        'generateTavernBtn': () => generateLocation('Tavern'),
+        'generateCampBtn': () => generateLocation('Camp'),
+        'generateTownBtn': () => generateLocation('Town'),
+        'generateCityBtn': () => generateLocation('City'),
+        'generateEventBtn': generateEvent,
+        'clearEventBtn': clearEvent,
+        'saveNPCBtn': saveNPC,
+        'clearNPCBtn': clearNPC,
+        'saveLocationBtn': saveLocation,
+        'clearLocationBtn': clearLocation,
+        'clearNPCsBtn': clearSavedNPCs,
+        'clearLocationsBtn': clearSavedLocations,
+        'unlockFeaturesBtn': unlockFeatures
+    };
+
+    for (const [id, func] of Object.entries(buttons)) {
+        const button = document.getElementById(id);
+        if (button) {
+            button.addEventListener('click', func);
+        }
+    }
+
+    // Initialize feature lock state and fetch valid codes
+    if (localStorage.getItem('featuresUnlocked') === null) {
+        localStorage.setItem('featuresUnlocked', 'false');
+    }
+    fetchValidCodes(); // Fetch codes when the page loads
+    updateFeatureAccess();
+
+    // Initialize tabs
+    const tabs = document.querySelectorAll('.tab-button');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            switchTab(tab.dataset.tab);
+        });
+    });
+
+    // Set the initial active tab
+    switchTab('generate-tab');
+
+    // Set up region select
+    const regionSelect = document.getElementById('regionSelect');
+    for (const region in regions) {
+        const option = document.createElement('option');
+        option.value = region;
+        option.textContent = region;
+        regionSelect.appendChild(option);
+    }
+
+    // Initialize the application state
+    updateSavedNPCsList();
+    updateSavedLocationsList();
+    updateNPCTrustList();
+    updateFeatureAccess();
+    displayVisitedItems();
+    updateClearButtonVisibility();
+
+    // Add event listeners for the new buttons
+    document.getElementById('tavernNoticesBtn').addEventListener('click', () => {
+        displayNotices('tavernNotices');
+    });
+    document.getElementById('streetGossipBtn').addEventListener('click', () => {
+        displayNotices('streetGossip');
+    });
+    document.getElementById('townNoticesBtn').addEventListener('click', () => {
+        displayNotices('townNotices');
+    });
+}
+
 // Utility Functions
 function getRandomElement(array) {
     return array[Math.floor(Math.random() * array.length)];
@@ -442,10 +531,17 @@ function switchTab(tabId) {
         }
     }
 
-    // Patreon lock for Noticeboards tab
-    if (tabId === 'noticeboards-tab' && !isPatreonUnlocked()) {
-        alert("This feature is locked. Please unlock with a valid Patreon code.");
-        switchTab('generate-tab'); // Switch back to a default tab
+    // Handle Noticeboards tab
+    if (tabId === 'noticeboards-tab') {
+        const noticeboardsContent = document.getElementById('noticeboards-content');
+        const noticeboardsDescription = document.getElementById('noticeboards-description');
+        if (isPatreonUnlocked()) {
+            noticeboardsContent.style.display = 'block';
+            noticeboardsDescription.style.display = 'none';
+        } else {
+            noticeboardsContent.style.display = 'none';
+            noticeboardsDescription.style.display = 'block';
+        }
     }
 }
 
@@ -462,6 +558,7 @@ document.getElementById('townNoticesBtn').addEventListener('click', () => {
 
 // Ensure the new tab button is included in the initialization
 document.addEventListener('DOMContentLoaded', () => {
+    if (isGM) {
     const tabs = document.querySelectorAll('.tab-button');
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -471,10 +568,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set the initial active tab
     switchTab('generate-tab');
+}
 });
 
 
-  function displayNotices(category) {
+function displayNotices(category) {
+    if (!isGM || !isPatreonUnlocked()) {
+        console.log("This feature is not available.");
+        return;
+    }
     const notices = noticeboardsData[category];
     const randomNotices = [];
 
@@ -489,6 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
         noticeContainer.innerHTML += `<p>${notice}</p>`;
     });
 }
+
 
 // Generator Functions
 function generateNPC() {
@@ -584,8 +687,8 @@ function generateLocation(type) {
 }
 
 function generateEvent() {
-    if (!isPatreonUnlocked()) {
-        alert("This feature is locked. Please unlock with a valid Patreon code.");
+    if (!isGM || !isPatreonUnlocked()) {
+        console.log("This feature is not available.");
         return;
     }
     const regionSelect = document.getElementById('regionSelect');
@@ -637,8 +740,8 @@ function displayVisitedItems() {
 
 // Save and Load Functions
 function saveNPC() {
-    if (!isPatreonUnlocked()) {
-        alert("This feature is locked. Please unlock with a valid Patreon code.");
+    if (!isGM || !isPatreonUnlocked()) {
+        console.log("This feature is not available.");
         return;
     }
     const npcInfo = document.getElementById('npcInfo').innerHTML;
@@ -655,8 +758,8 @@ function saveNPC() {
 }
 
 function saveLocation() {
-    if (!isPatreonUnlocked()) {
-        alert("This feature is locked. Please unlock with a valid Patreon code.");
+    if (!isGM || !isPatreonUnlocked()) {
+        console.log("This feature is not available.");
         return;
     }
     const locationInfo = document.getElementById('locationInfo').innerHTML;
@@ -870,6 +973,15 @@ async function unlockFeatures() {
 function updateFeatureAccess() {
     const isUnlocked = isPatreonUnlocked();
     const lockedElements = document.querySelectorAll('.patreon-locked');
+    const noticeboardsTab = document.getElementById('noticeboards-tab');
+if (noticeboardsTab) {
+    const noticeboardsContent = noticeboardsTab.querySelector('#noticeboards-content');
+    const noticeboardsDescription = noticeboardsTab.querySelector('#noticeboards-description');
+    if (noticeboardsContent && noticeboardsDescription) {
+        noticeboardsContent.style.display = isUnlocked ? 'block' : 'none';
+        noticeboardsDescription.style.display = isUnlocked ? 'none' : 'block';
+    }
+}
     lockedElements.forEach(el => {
         el.style.display = isUnlocked ? 'inline-block' : 'none';
     });
@@ -877,6 +989,14 @@ function updateFeatureAccess() {
     const unlockFeaturesBtn = document.getElementById('unlockFeaturesBtn');
     if (unlockFeaturesBtn) {
         unlockFeaturesBtn.textContent = isUnlocked ? 'Change Patreon Code' : 'Unlock Patreon Features';
+    }
+
+    // Handle Noticeboards tab
+    const noticeboardsContent = document.getElementById('noticeboards-content');
+    const noticeboardsDescription = document.getElementById('noticeboards-description');
+    if (noticeboardsContent && noticeboardsDescription) {
+        noticeboardsContent.style.display = isUnlocked ? 'block' : 'none';
+        noticeboardsDescription.style.display = isUnlocked ? 'none' : 'block';
     }
 }
 
