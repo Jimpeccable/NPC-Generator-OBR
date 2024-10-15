@@ -11,6 +11,5 @@
     "popover": "/",
     "height": 600,
     "width": 400
-  },
-  "permissions": ["PLAYER:READ"]
+  }
 }
