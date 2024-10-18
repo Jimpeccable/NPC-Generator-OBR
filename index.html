@@ -3,15 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NPC Generator</title>
+    <title>DnD Realm Creator</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/@owlbear-rodeo/sdk@^1.3.8/dist/owlbear-rodeo-sdk.global.js"></script>
 </head>
 <body>
     <div id="app">
-        <h1>NPC Generator</h1>
-        <button id="generateBtn">Generate NPC</button>
-        <div id="npcInfo"></div>
+        <header>
+            <img src="crit.png" alt="Crit Logo" style="display: block; margin: 0 auto; height: 150px;">
+            <h1>DnD Realm Creator</h1>
+        </header>
+
+        <main role="main">
+            <div class="gm-only">
+                <div class="tab-buttons">
+                    <button class="tab-button active gm-only" data-tab="generate-tab">Generate</button>
+                    <button class="tab-button gm-only" data-tab="trust-tab">NPC Trust</button>
+                    <button class="tab-button gm-only" data-tab="noticeboards-tab">Noticeboards/Quests</button>
+                    <button class="tab-button gm-only" data-tab="weather-tab">Weather</button>
+                    <button class="tab-button gm-only" data-tab="patreon-tab">Patreon</button>
+                </div>
+
+                <div id="generate-tab" class="tab-content active">
+                    <h2>Generate</h2>
+                    <div class="button-group">
+                        <button id="generateNPCBtn" class="gm-only">NPC</button>
+                        <button id="generateTavernBtn" class="gm-only">Tavern</button>
+                        <button id="generateCampBtn" class="gm-only">Camp</button>
+                        <button id="generateTownBtn" class="gm-only">Town</button>
+                        <button id="generateCityBtn" class="gm-only">City</button>
+                    </div>
+                    <div class="event-generator patreon-locked">
+                        <select id="regionSelect" class="gm-only">
+                            <option value="">--Select Region--</option>
+                        </select>
+                        <button id="generateEventBtn" class="gm-only">Generate Event</button>
+                        <button id="clearEventBtn" class="gm-only">Clear Event</button>
+                    </div>
+                    <div id="npcInfo" class="info-box"></div>
+                    <div id="locationInfo" class="info-box"></div>
+                    <div id="eventInfo" class="info-box patreon-locked"></div>
+                    <div class="action-panel">
+                        <button id="saveNPCBtn" class="gm-only">Save NPC</button>
+                        <button id="clearNPCBtn" class="gm-only">Clear NPC</button>
+                        <button id="saveLocationBtn" class="gm-only">Save Location</button>
+                        <button id="clearLocationBtn" class="gm-only">Clear Location</button>
+                    </div>
+                    <p>Save features are locked. Please unlock with a valid Patreon code.</p>
+                </div>
+
+                <div id="trust-tab" class="tab-content">
+                    <h2>NPC Trust System</h2>
+                    <div id="selectedNPCInfo"></div>
+                    <div id="npcTrustList"></div>
+                    <div class="button-group patreon-locked">
+                        <button id="generateNPCEventsBtn" class="gm-only">Generate NPC Events</button>
+                    </div>
+                    <div id="npcEvents" class="info-box patreon-locked"></div>
+                </div>
+
+                <div id="noticeboards-tab" class="tab-content">
+                    <h2>Noticeboards/Quests</h2>
+                    <p id="noticeboards-description" class="patreon-locked">This feature is locked. Please unlock with a valid Patreon code.</p>
+                    <div id="noticeboards-content" class="patreon-locked">
+                        <div class="button-group">
+                            <button id="tavernNoticesBtn" class="gm-only">Tavern Notices</button>
+                            <button id="streetGossipBtn" class="gm-only">Street Gossip</button>
+                            <button id="townNoticesBtn" class="gm-only">Town Notices</button>
+                        </div>
+                        <div id="noticeboardContent" class="info-box"></div>
+                    </div>
+                </div>
+
+                <div id="weather-tab" class="tab-content">
+                    <h2>Weather System</h2>
+                    <div class="button-group">
+                        
+                        <button id="generateWeatherEventBtn" class="gm-only patreon-locked">Generate Weather Event</button>
+                    </div>
+                    <div id="weatherInfo" class="info-box patreon-locked"></div>
+                    <div id="weatherEventInfo" class="info-box patreon-locked"></div>
+                </div>
+
+                <div id="patreon-tab" class="tab-content">
+                    <h2>Unlock Premium Features</h2>
+                    <div class="patreon-section">
+                        <input type="text" id="patreonCode" placeholder="Enter Patreon Code" class="gm-only">
+                        <button id="unlockFeaturesBtn" class="gm-only">Unlock Features</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="gm-only">
+            <div class="saved-npcs">
+                <h2>Saved NPCs</h2>
+                <ul id="savedNPCsList"></ul>
+                <button id="clearNPCsBtn" class="gm-only">Clear All NPCs</button>
+            </div>
+            <div class="saved-locations">
+                <h2>Saved Locations</h2>
+                <ul id="savedLocationsList"></ul>
+                <button id="clearLocationsBtn" class="gm-only">Clear All Locations</button>
+            </div>
+            <div id="visitedItems">
+                <h3>Visited NPCs</h3>
+                <ul id="visitedNPCsList"></ul>
+                <h3>Visited Locations</h3>
+                <ul id="visitedLocationsList"></ul>
+            </div>
+        </aside>
     </div>
+
+    <footer>
+        <div id="patreon-section-footer">
+            <img src="Patreon.png" alt="Patreon Logo" style="width: auto; height: 250px;">
+            <a href="https://www.patreon.com/Jimpeccable" target="_blank">Unlock features through Patreon, now!</a>
+        </div>
+    </footer>
     <script src="script.js"></script>
 </body>
 </html>

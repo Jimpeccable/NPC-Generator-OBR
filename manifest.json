@@ -1,14 +1,14 @@
 {
   "name": "NPC Generator",
-  "description": "Generate random NPCs with attributes and money",
-  "version": "1.0.0",
+  "description": "Generate random NPCs, locations, and events for your RPG sessions",
+  "version": "1.0.3",
   "author": "James Coupe",
-  "icon": "https://npc-generator-obr.onrender.com/icon.png",
+  "icon": "/icon.png",
   "manifest_version": 1,
   "action": {
     "title": "NPC Generator",
-    "icon": "https://npc-generator-obr.onrender.com/icon.png",
-    "popover": "https://npc-generator-obr.onrender.com/",
+    "icon": "/icon.png",
+    "popover": "/",
     "height": 600,
     "width": 400
   }
