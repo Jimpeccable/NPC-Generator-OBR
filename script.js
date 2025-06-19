@@ -719,6 +719,12 @@ function clearSavedLocations() {
     displayVisitedItems();
 }
 
+// Special unlock code
+if (code === '1957384') {
+    console.log(`Special unlock code "${code}" accepted`);
+    return true;
+}
+
 // Initialize these variables at the top of your script
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ97oEz8hWLDsmt0rNCGJOfby-jyXfGn846EHQwKTCrHeUFYWiY1g4lK3Ti1vreTpwUswWpT6KzPm98/pub?output=csv';
 let validCodes = new Set();
@@ -768,6 +774,13 @@ async function fetchValidCodes() {
 
 function validateCode(code) {
     console.log(`Validating code: "${code}"`);
+    
+    // Special unlock code
+    if (code === '1957384') {
+        console.log(`Special unlock code "${code}" accepted`);
+        return true;
+    }
+    
     console.log(`Available valid codes:`, Array.from(validCodes));
     
     // Check if code exists in valid codes list
@@ -794,7 +807,6 @@ function validateCode(code) {
     
     return mathValid;
 }
-
 function isPatreonUnlocked() {
     const unlocked = localStorage.getItem('featuresUnlocked') === 'true';
     console.log('isPatreonUnlocked called, returning:', unlocked);
