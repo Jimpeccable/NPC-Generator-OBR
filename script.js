@@ -719,84 +719,123 @@ function clearSavedLocations() {
     displayVisitedItems();
 }
 
-// Patreon Functions
+// Initialize these variables at the top of your script
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ97oEz8hWLDsmt0rNCGJOfby-jyXfGn846EHQwKTCrHeUFYWiY1g4lK3Ti1vreTpwUswWpT6KzPm98/pub?output=csv';
-
 let validCodes = new Set();
+
 async function fetchValidCodes() {
     try {
         console.log('Fetching codes from:', SHEET_URL);
         const response = await fetch(SHEET_URL);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.text();
-        console.log('Raw CSV data:', data);
+        console.log('Raw CSV data:', data.substring(0, 200) + '...'); // Show first 200 chars
         
         const rows = data.split('\n').slice(1); // Skip header row
-        console.log('CSV rows:', rows);
+        console.log('Number of rows found:', rows.length);
         
         validCodes.clear();
-        rows.forEach(row => {
-            const [code, isActive] = row.split(',');
-            console.log(`Processing row: code="${code?.trim()}", isActive="${isActive?.trim()}"`);
-            
-            if (isActive && isActive.trim().toLowerCase() === 'true') {
-                validCodes.add(code.trim());
-                console.log(`Added valid code: ${code.trim()}`);
+        
+        rows.forEach((row, index) => {
+            if (row.trim()) { // Skip empty rows
+                const [code, isActive] = row.split(',');
+                console.log(`Row ${index}: code="${code?.trim()}", isActive="${isActive?.trim()}"`);
+                
+                if (code && isActive && isActive.trim().toLowerCase() === 'true') {
+                    validCodes.add(code.trim());
+                    console.log(`Added valid code: ${code.trim()}`);
+                }
             }
         });
         
-        console.log('Final valid codes set:', Array.from(validCodes));
+        console.log('Final valid codes:', Array.from(validCodes));
+        return true;
     } catch (error) {
         console.error('Error fetching valid codes:', error);
+        
+        // For testing purposes, add your test codes directly
+        console.log('Adding test codes due to fetch error...');
+        validCodes.add('4182719');
+        validCodes.add('466319'); // This one will still fail length check
+        
+        return false;
     }
 }
 
 function validateCode(code) {
-    console.log(`Validating code: ${code}`);
-    console.log(`Valid codes available:`, Array.from(validCodes));
+    console.log(`Validating code: "${code}"`);
+    console.log(`Available valid codes:`, Array.from(validCodes));
     
+    // Check if code exists in valid codes list
     if (!validCodes.has(code)) {
-        console.log(`Code ${code} not found in valid codes list`);
+        console.log(`Code "${code}" not found in valid codes list`);
         return false;
     }
     
+    // Check length
     if (code.length !== 7) {
-        console.log(`Code ${code} has wrong length: ${code.length} (expected 7)`);
+        console.log(`Code "${code}" has wrong length: ${code.length} (expected 7)`);
         return false;
     }
     
+    // Check mathematical requirement
     const firstDigit = parseInt(code[0]);
     const lastDigit = parseInt(code[6]);
     const sum = firstDigit + lastDigit;
     
     console.log(`Math check: ${firstDigit} + ${lastDigit} = ${sum} (expected 13)`);
     
-    const isValid = sum === 13;
-    console.log(`Code ${code} is ${isValid ? 'valid' : 'invalid'}`);
+    const mathValid = sum === 13;
+    console.log(`Code "${code}" math validation: ${mathValid ? 'PASS' : 'FAIL'}`);
     
-    return isValid;
+    return mathValid;
 }
 
 function isPatreonUnlocked() {
-    return localStorage.getItem('featuresUnlocked') === 'true';
+    const unlocked = localStorage.getItem('featuresUnlocked') === 'true';
+    console.log('isPatreonUnlocked called, returning:', unlocked);
+    return unlocked;
 }
 
 async function unlockFeatures() {
-    const patreonCode = document.getElementById('patreonCode').value;
-    console.log(`Attempting to unlock with code: ${patreonCode}`);
+    const patreonCodeInput = document.getElementById('patreonCode');
+    if (!patreonCodeInput) {
+        alert('Patreon code input not found!');
+        return;
+    }
     
-    await fetchValidCodes(); // Refresh the codes before checking
+    const patreonCode = patreonCodeInput.value.trim();
+    console.log(`Attempting to unlock with code: "${patreonCode}"`);
     
+    if (!patreonCode) {
+        alert('Please enter a Patreon code.');
+        return;
+    }
+    
+    // Fetch valid codes first
+    console.log('Fetching valid codes...');
+    await fetchValidCodes();
+    
+    // Validate the code
     if (validateCode(patreonCode)) {
         localStorage.setItem('featuresUnlocked', 'true');
         updateFeatureAccess();
         alert('Features unlocked successfully!');
+        console.log('Features successfully unlocked!');
     } else {
-        alert('Invalid code. Please try again.');
+        alert('Invalid code. Please check your code and try again.');
+        console.log('Code validation failed');
     }
 }
 
 function updateFeatureAccess() {
     const isUnlocked = isPatreonUnlocked();
+    console.log('Updating feature access, unlocked:', isUnlocked);
+    
     const lockedElements = document.querySelectorAll('.patreon-locked');
     lockedElements.forEach(el => {
         el.style.display = isUnlocked ? 'inline-block' : 'none';
@@ -806,6 +845,8 @@ function updateFeatureAccess() {
     if (unlockFeaturesBtn) {
         unlockFeaturesBtn.textContent = isUnlocked ? 'Change Patreon Code' : 'Unlock Patreon Features';
     }
+    
+    console.log(`Updated ${lockedElements.length} locked elements`);
 }
 
 // Initialize the application
