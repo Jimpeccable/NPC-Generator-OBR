@@ -725,7 +725,9 @@ if (code === '1957384') {
     return true;
 }
 
-
+// Initialize these variables at the top of your script
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ97oEz8hWLDsmt0rNCGJOfby-jyXfGn846EHQwKTCrHeUFYWiY1g4lK3Ti1vreTpwUswWpT6KzPm98/pub?output=csv';
+let validCodes = new Set();
 
 async function fetchValidCodes() {
     try {
