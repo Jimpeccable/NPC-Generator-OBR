@@ -482,10 +482,7 @@ function generateLocation(type) {
 }
 
 function generateEvent() {
-    if (!isPatreonUnlocked()) {
-        alert("This feature is locked. Please unlock with a valid Patreon code.");
-        return;
-    }
+    // Patreon unlock check removed
     const regionSelect = document.getElementById('regionSelect');
     const selectedRegion = regionSelect.value;
     if (selectedRegion && regions[selectedRegion]) {
@@ -535,10 +532,7 @@ function displayVisitedItems() {
 
 // Save and Load Functions
 function saveNPC() {
-    if (!isPatreonUnlocked()) {
-        alert("This feature is locked. Please unlock with a valid Patreon code.");
-        return;
-    }
+    // Patreon unlock check removed
     const npcInfo = document.getElementById('npcInfo').innerHTML;
     if (!npcInfo.trim()) return;
     const npcName = npcInfo.match(/<h3>(.*?)<\/h3>/)[1];
@@ -553,10 +547,7 @@ function saveNPC() {
 }
 
 function saveLocation() {
-    if (!isPatreonUnlocked()) {
-        alert("This feature is locked. Please unlock with a valid Patreon code.");
-        return;
-    }
+    // Patreon unlock check removed
     const locationInfo = document.getElementById('locationInfo').innerHTML;
     if (!locationInfo.trim()) return;
     const locationName = locationInfo.match(/<h2>(.*?)<\/h2>/)[1];
@@ -719,54 +710,96 @@ function clearSavedLocations() {
     displayVisitedItems();
 }
 
-// Patreon Functions
+// Initialize these variables at the top of your script
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ97oEz8hWLDsmt0rNCGJOfby-jyXfGn846EHQwKTCrHeUFYWiY1g4lK3Ti1vreTpwUswWpT6KzPm98/pub?output=csv';
-
 let validCodes = new Set();
 
 async function fetchValidCodes() {
     try {
+        console.log('Fetching codes from:', SHEET_URL);
         const response = await fetch(SHEET_URL);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.text();
+        console.log('Raw CSV data:', data.substring(0, 200) + '...'); // Show first 200 chars
+        
         const rows = data.split('\n').slice(1); // Skip header row
+        console.log('Number of rows found:', rows.length);
+        
         validCodes.clear();
-        rows.forEach(row => {
-            const [code, isActive] = row.split(',');
-            if (isActive.trim().toLowerCase() === 'true') {
-                validCodes.add(code.trim());
+        
+        rows.forEach((row, index) => {
+            if (row.trim()) { // Skip empty rows
+                const [code, isActive] = row.split(',');
+                console.log(`Row ${index}: code="${code?.trim()}", isActive="${isActive?.trim()}"`);
+                
+                if (code && isActive && isActive.trim().toLowerCase() === 'true') {
+                    validCodes.add(code.trim());
+                    console.log(`Added valid code: ${code.trim()}`);
+                }
             }
         });
+        
+        console.log('Final valid codes:', Array.from(validCodes));
+        return true;
     } catch (error) {
         console.error('Error fetching valid codes:', error);
+        
+        // For testing purposes, add your test codes directly
+        console.log('Adding test codes due to fetch error...');
+        validCodes.add('4182719');
+        validCodes.add('466319'); // This one will still fail length check
+        
+        return false;
     }
 }
 
 function validateCode(code) {
-    if (!validCodes.has(code)) return false;
-    if (code.length !== 7) return false;
+    console.log(`Validating code: "${code}"`);
+    console.log(`Available valid codes:`, Array.from(validCodes));
+    
+    // Check if code exists in valid codes list
+    if (!validCodes.has(code)) {
+        console.log(`Code "${code}" not found in valid codes list`);
+        return false;
+    }
+    
+    // Check length
+    if (code.length !== 7) {
+        console.log(`Code "${code}" has wrong length: ${code.length} (expected 7)`);
+        return false;
+    }
+    
+    // Check mathematical requirement
     const firstDigit = parseInt(code[0]);
     const lastDigit = parseInt(code[6]);
-    return firstDigit + lastDigit === 13;
+    const sum = firstDigit + lastDigit;
+    
+    console.log(`Math check: ${firstDigit} + ${lastDigit} = ${sum} (expected 13)`);
+    
+    const mathValid = sum === 13;
+    console.log(`Code "${code}" math validation: ${mathValid ? 'PASS' : 'FAIL'}`);
+    
+    return mathValid;
 }
 
 function isPatreonUnlocked() {
-    return localStorage.getItem('featuresUnlocked') === 'true';
+    // Always return true to unlock features
+    return true;
 }
 
 async function unlockFeatures() {
-    const patreonCode = document.getElementById('patreonCode').value;
-    await fetchValidCodes(); // Refresh the codes before checking
-    if (validateCode(patreonCode)) {
-        localStorage.setItem('featuresUnlocked', 'true');
-        updateFeatureAccess();
-        alert('Features unlocked successfully!');
-    } else {
-        alert('Invalid code. Please try again.');
-    }
+    // This function no longer performs any unlock logic
+    console.log('Unlock features function called, but features are always unlocked.');
 }
 
 function updateFeatureAccess() {
-    const isUnlocked = isPatreonUnlocked();
+    const isUnlocked = isPatreonUnlocked(); // This will now always be true
+    console.log('Updating feature access, unlocked:', isUnlocked);
+    
     const lockedElements = document.querySelectorAll('.patreon-locked');
     lockedElements.forEach(el => {
         el.style.display = isUnlocked ? 'inline-block' : 'none';
@@ -774,8 +807,10 @@ function updateFeatureAccess() {
     
     const unlockFeaturesBtn = document.getElementById('unlockFeaturesBtn');
     if (unlockFeaturesBtn) {
-        unlockFeaturesBtn.textContent = isUnlocked ? 'Change Patreon Code' : 'Unlock Patreon Features';
+        unlockFeaturesBtn.style.display = 'none'; // Hide the Patreon button
     }
+    
+    console.log(`Updated ${lockedElements.length} locked elements`);
 }
 
 // Initialize the application
@@ -795,7 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'clearLocationBtn': clearLocation,
         'clearNPCsBtn': clearSavedNPCs,
         'clearLocationsBtn': clearSavedLocations,
-        'unlockFeaturesBtn': unlockFeatures
+        // 'unlockFeaturesBtn': unlockFeatures // Removed from direct assignment to hide
     };
 
     for (const [id, func] of Object.entries(buttons)) {
@@ -806,11 +841,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize feature lock state and fetch valid codes
-    if (localStorage.getItem('featuresUnlocked') === null) {
-        localStorage.setItem('featuresUnlocked', 'false');
-    }
-    fetchValidCodes(); // Fetch codes when the page loads
-    updateFeatureAccess();
+    // localStorage.setItem('featuresUnlocked', 'true'); // Set features to unlocked by default
+    fetchValidCodes(); // Fetch codes (though no longer strictly necessary for unlock logic)
+    updateFeatureAccess(); // This will now always show features and hide the button
 
     // Initialize tabs
     const tabs = document.querySelectorAll('.tab-button');
