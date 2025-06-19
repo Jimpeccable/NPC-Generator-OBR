@@ -482,7 +482,10 @@ function generateLocation(type) {
 }
 
 function generateEvent() {
-    // Patreon unlock check removed
+    if (!isPatreonUnlocked()) {
+        alert("This feature is locked. Please unlock with a valid Patreon code.");
+        return;
+    }
     const regionSelect = document.getElementById('regionSelect');
     const selectedRegion = regionSelect.value;
     if (selectedRegion && regions[selectedRegion]) {
@@ -532,7 +535,10 @@ function displayVisitedItems() {
 
 // Save and Load Functions
 function saveNPC() {
-    // Patreon unlock check removed
+    if (!isPatreonUnlocked()) {
+        alert("This feature is locked. Please unlock with a valid Patreon code.");
+        return;
+    }
     const npcInfo = document.getElementById('npcInfo').innerHTML;
     if (!npcInfo.trim()) return;
     const npcName = npcInfo.match(/<h3>(.*?)<\/h3>/)[1];
@@ -547,7 +553,10 @@ function saveNPC() {
 }
 
 function saveLocation() {
-    // Patreon unlock check removed
+    if (!isPatreonUnlocked()) {
+        alert("This feature is locked. Please unlock with a valid Patreon code.");
+        return;
+    }
     const locationInfo = document.getElementById('locationInfo').innerHTML;
     if (!locationInfo.trim()) return;
     const locationName = locationInfo.match(/<h2>(.*?)<\/h2>/)[1];
@@ -787,17 +796,44 @@ function validateCode(code) {
 }
 
 function isPatreonUnlocked() {
-    // Always return true to unlock features
-    return true;
+    const unlocked = localStorage.getItem('featuresUnlocked') === 'true';
+    console.log('isPatreonUnlocked called, returning:', unlocked);
+    return unlocked;
 }
 
 async function unlockFeatures() {
-    // This function no longer performs any unlock logic
-    console.log('Unlock features function called, but features are always unlocked.');
+    const patreonCodeInput = document.getElementById('patreonCode');
+    if (!patreonCodeInput) {
+        alert('Patreon code input not found!');
+        return;
+    }
+    
+    const patreonCode = patreonCodeInput.value.trim();
+    console.log(`Attempting to unlock with code: "${patreonCode}"`);
+    
+    if (!patreonCode) {
+        alert('Please enter a Patreon code.');
+        return;
+    }
+    
+    // Fetch valid codes first
+    console.log('Fetching valid codes...');
+    await fetchValidCodes();
+    
+    // Validate the code
+    if (validateCode(patreonCode)) {
+        localStorage.setItem('featuresUnlocked', 'true');
+        updateFeatureAccess();
+        alert('Features unlocked successfully!');
+        console.log('Features successfully unlocked!');
+    } else {
+        alert('Invalid code. Please check your code and try again.');
+        console.log('Code validation failed');
+    }
 }
 
 function updateFeatureAccess() {
-    const isUnlocked = isPatreonUnlocked(); // This will now always be true
+    const isUnlocked = isPatreonUnlocked();
     console.log('Updating feature access, unlocked:', isUnlocked);
     
     const lockedElements = document.querySelectorAll('.patreon-locked');
@@ -807,7 +843,7 @@ function updateFeatureAccess() {
     
     const unlockFeaturesBtn = document.getElementById('unlockFeaturesBtn');
     if (unlockFeaturesBtn) {
-        unlockFeaturesBtn.style.display = 'none'; // Hide the Patreon button
+        unlockFeaturesBtn.textContent = isUnlocked ? 'Change Patreon Code' : 'Unlock Patreon Features';
     }
     
     console.log(`Updated ${lockedElements.length} locked elements`);
@@ -830,7 +866,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'clearLocationBtn': clearLocation,
         'clearNPCsBtn': clearSavedNPCs,
         'clearLocationsBtn': clearSavedLocations,
-        // 'unlockFeaturesBtn': unlockFeatures // Removed from direct assignment to hide
+        'unlockFeaturesBtn': unlockFeatures
     };
 
     for (const [id, func] of Object.entries(buttons)) {
@@ -841,9 +877,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Initialize feature lock state and fetch valid codes
-    // localStorage.setItem('featuresUnlocked', 'true'); // Set features to unlocked by default
-    fetchValidCodes(); // Fetch codes (though no longer strictly necessary for unlock logic)
-    updateFeatureAccess(); // This will now always show features and hide the button
+    if (localStorage.getItem('featuresUnlocked') === null) {
+        localStorage.setItem('featuresUnlocked', 'false');
+    }
+    fetchValidCodes(); // Fetch codes when the page loads
+    updateFeatureAccess();
 
     // Initialize tabs
     const tabs = document.querySelectorAll('.tab-button');
