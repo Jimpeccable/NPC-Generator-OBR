@@ -723,30 +723,57 @@ function clearSavedLocations() {
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ97oEz8hWLDsmt0rNCGJOfby-jyXfGn846EHQwKTCrHeUFYWiY1g4lK3Ti1vreTpwUswWpT6KzPm98/pub?output=csv';
 
 let validCodes = new Set();
-
 async function fetchValidCodes() {
     try {
+        console.log('Fetching codes from:', SHEET_URL);
         const response = await fetch(SHEET_URL);
         const data = await response.text();
+        console.log('Raw CSV data:', data);
+        
         const rows = data.split('\n').slice(1); // Skip header row
+        console.log('CSV rows:', rows);
+        
         validCodes.clear();
         rows.forEach(row => {
             const [code, isActive] = row.split(',');
-            if (isActive.trim().toLowerCase() === 'true') {
+            console.log(`Processing row: code="${code?.trim()}", isActive="${isActive?.trim()}"`);
+            
+            if (isActive && isActive.trim().toLowerCase() === 'true') {
                 validCodes.add(code.trim());
+                console.log(`Added valid code: ${code.trim()}`);
             }
         });
+        
+        console.log('Final valid codes set:', Array.from(validCodes));
     } catch (error) {
         console.error('Error fetching valid codes:', error);
     }
 }
 
 function validateCode(code) {
-    if (!validCodes.has(code)) return false;
-    if (code.length !== 7) return false;
+    console.log(`Validating code: ${code}`);
+    console.log(`Valid codes available:`, Array.from(validCodes));
+    
+    if (!validCodes.has(code)) {
+        console.log(`Code ${code} not found in valid codes list`);
+        return false;
+    }
+    
+    if (code.length !== 7) {
+        console.log(`Code ${code} has wrong length: ${code.length} (expected 7)`);
+        return false;
+    }
+    
     const firstDigit = parseInt(code[0]);
     const lastDigit = parseInt(code[6]);
-    return firstDigit + lastDigit === 13;
+    const sum = firstDigit + lastDigit;
+    
+    console.log(`Math check: ${firstDigit} + ${lastDigit} = ${sum} (expected 13)`);
+    
+    const isValid = sum === 13;
+    console.log(`Code ${code} is ${isValid ? 'valid' : 'invalid'}`);
+    
+    return isValid;
 }
 
 function isPatreonUnlocked() {
@@ -755,7 +782,10 @@ function isPatreonUnlocked() {
 
 async function unlockFeatures() {
     const patreonCode = document.getElementById('patreonCode').value;
+    console.log(`Attempting to unlock with code: ${patreonCode}`);
+    
     await fetchValidCodes(); // Refresh the codes before checking
+    
     if (validateCode(patreonCode)) {
         localStorage.setItem('featuresUnlocked', 'true');
         updateFeatureAccess();
